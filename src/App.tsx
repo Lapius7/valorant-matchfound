@@ -282,7 +282,7 @@ function UpdateChip({ u }: { u: Snap["update"] }) {
       <span className="truncate">{u ? label : `v${__APP_VERSION__}`}</span>
     </button>
       {ask && createPortal(
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-6" onClick={() => setAsk(false)}>
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 p-6" onClick={() => setAsk(false)}>
           <div role="alertdialog" aria-modal="true" className="w-full max-w-[300px] rounded-2xl bg-card p-5 shadow-[0_0_0_1px_var(--border)]" onClick={(e) => e.stopPropagation()}>
             <p className="text-sm leading-6 font-medium">アップデートしますか？</p>
             <p className="mt-1 text-xs leading-5 text-muted-foreground">v{u?.version} に更新し、アプリを再起動します。</p>
