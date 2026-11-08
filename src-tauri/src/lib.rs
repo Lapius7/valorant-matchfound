@@ -111,7 +111,7 @@ fn logout(app: AppHandle, st: State<'_, St>) {
 async fn notify(app: &AppHandle, st: &Shared, body: serde_json::Value) -> Option<String> {
     let result = send(st, body).await;
     let (ok, message, id) = match result {
-        Ok(v) => (true, "Discord に DM を送りました".to_string(), v["messageId"].as_str().map(String::from)),
+        Ok(v) => (true, if v["skipped"].is_string() { "直前に送信済みのため、今回はスキップしました".to_string() } else { "Discord に DM を送りました".to_string() }, v["messageId"].as_str().map(String::from)),
         Err(m) => (false, m, None),
     };
     push(app, st, |s| { s.bot_missing = !ok && message.starts_with("DM を受け取れない"); s.last_notify = Some(Notify { at: auth::now(), ok, message }); });
@@ -143,7 +143,7 @@ async fn send_to(st: &Shared, url: &str, body: serde_json::Value) -> Result<serd
 
 #[tauri::command]
 async fn send_test(app: AppHandle, st: State<'_, St>) -> Result<(), String> {
-    notify(&app, &st, serde_json::json!({"phase": "pregame", "mode": "テスト", "map": "テスト送信"})).await;
+    notify(&app, &st, serde_json::json!({"phase": "pregame", "test": true, "mode": "テスト", "map": "テスト送信"})).await;
     Ok(())
 }
 
