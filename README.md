@@ -53,6 +53,7 @@ The **Share URL** card on the Home tab issues `https://lapbot.lapius7.com/system
 | Data | Where it goes |
 | --- | --- |
 | Match info (mode, map, player names, agents) | Lapbot API, then your Discord DM and the share page |
+| Finished match results (map, each player's name, agent, K/D/A, ACS, rank change) | Stored on the Lapbot server (MySQL) so the same match is not fetched again, and shown in your match history on the site |
 | Lapount refresh token and email | Windows Credential Manager on your PC |
 | Usage count | While the app runs and you are logged in, it pings Lapbot every 5 seconds. Your Lapount ID, Discord ID, first/last-seen times and ping/DM counts are kept for the install and online counts and for troubleshooting. Only anonymous totals are public; per-user details are visible to the developer only |
 | Riot credentials | Used only to talk to Riot on your PC. Never sent to Lapbot |
