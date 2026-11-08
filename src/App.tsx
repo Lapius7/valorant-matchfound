@@ -35,6 +35,7 @@ const PHASE: Record<Snap["riot"], { label: string; hint: string; live: boolean }
   ingame: { label: "試合中", hint: "", live: true },
 };
 
+type Tab = "home" | "account" | "settings";
 const SETUP_URL = "https://lapbot.lapius7.com/application/valorant-matchfound/setup";
 const BOT_URL = "https://discord.com/oauth2/authorize?client_id=1470053949263577189&integration_type=1&scope=applications.commands";
 
@@ -54,6 +55,30 @@ function BotHelp({ n }: { n: Snap["lastNotify"] }) {
         </div>
       )}
     </div>
+  );
+}
+
+function LoginCard({ s, busy, run }: { s: Snap; busy: boolean; run: (c: string) => Promise<void> }) {
+  return (
+    <section className="rise flex flex-col gap-3 rounded-2xl bg-card p-5 shadow-[0_0_0_1px_var(--border)]">
+      <h2 className="text-sm leading-5 font-medium">Lapount でログイン</h2>
+      {s.loginCode ? (
+        <>
+          <p className="font-mono text-[28px] leading-9 font-medium tracking-[0.12em] select-text">{s.loginCode}</p>
+          <p className="flex items-center gap-2 text-muted-foreground"><Loader2 className="size-4 flex-none animate-spin" />ブラウザで承認してください</p>
+          <div className="flex gap-2">
+            <Button className="h-10 flex-1" disabled={busy} onClick={() => run("login")}>やり直す</Button>
+            <Button variant="outline" className="h-10" onClick={() => invoke("cancel_login")}>キャンセル</Button>
+          </div>
+        </>
+      ) : (
+        <>
+          <p className="text-muted-foreground">ログインすると、連携済みの Discord に DM が届きます。</p>
+          <Button className="h-10" disabled={busy} onClick={() => run("login")}>Lapount でログイン</Button>
+        </>
+      )}
+      {s.loginError && <p className="text-destructive">{s.loginError}</p>}
+    </section>
   );
 }
 
@@ -118,7 +143,7 @@ export default function App() {
   const [s, setS] = useState<Snap | null>(null);
   const [auto, setAuto] = useState(false);
   const [busy, setBusy] = useState(false);
-  const [tab, setTab] = useState<"home" | "settings">("home");
+  const [tab, setTab] = useState<Tab>("home");
 
   useEffect(() => {
     invoke<Snap>("get_state").then(setS);
@@ -171,68 +196,48 @@ export default function App() {
         </button>
       )}
       {s.loggedIn && s.profile && !s.profile.discordId && (
-        <button type="button" onClick={() => setTab("settings")} className="rise flex items-center gap-3 rounded-2xl bg-card px-5 py-3 text-left text-sm leading-5 shadow-[0_0_0_1px_#d99a7c66] transition-[scale] duration-150 active:scale-[0.98]" style={style(2)}>
+        <button type="button" onClick={() => setTab("account")} className="rise flex items-center gap-3 rounded-2xl bg-card px-5 py-3 text-left text-sm leading-5 shadow-[0_0_0_1px_#d99a7c66] transition-[scale] duration-150 active:scale-[0.98]" style={style(2)}>
           <TriangleAlert className="size-4 flex-none text-[#d99a7c]" aria-hidden />
-          <span>Discord が未連携のため DM は届きません。設定で連携してください。</span>
+          <span>Discord が未連携のため DM は届きません。アカウントタブで確認してください。</span>
         </button>
       )}
       {s.loggedIn ? <ShareCard url={s.share} compact={compact} /> : (
-        <button type="button" onClick={() => setTab("settings")} className="rise flex h-12 items-center justify-between rounded-2xl bg-card px-5 text-sm shadow-[0_0_0_1px_var(--border)] transition-[scale] duration-150 active:scale-[0.98]" style={style(2)}>
-          <span className="text-muted-foreground">DM を受け取るには Lapount でログイン</span><span>設定へ</span>
+        <button type="button" onClick={() => setTab("account")} className="rise flex h-12 items-center justify-between rounded-2xl bg-card px-5 text-sm shadow-[0_0_0_1px_var(--border)] transition-[scale] duration-150 active:scale-[0.98]" style={style(2)}>
+          <span className="text-muted-foreground">DM を受け取るには Lapount でログイン</span><span>アカウントへ</span>
         </button>
       )}
       </>}
+      {tab === "account" && <>
+      {s.loggedIn ? <>
+        <AccountCard p={s.profile} email={s.email} botMissing={s.botMissing} />
+        <Button variant="outline" className="rise h-11 flex-none rounded-xl" style={style(2)} onClick={() => invoke("logout")}>
+          <LogOut className="size-4" />ログアウト
+        </Button>
+      </> : <LoginCard s={s} busy={busy} run={run} />}
+      </>}
       {tab === "settings" && <>
-      {s.loggedIn && <AccountCard p={s.profile} email={s.email} botMissing={s.botMissing} />}
-      <section className={cn("flex flex-none flex-col rounded-2xl bg-card px-5 shadow-[0_0_0_1px_var(--border)] transition-[padding] duration-300", false ? "py-3.5" : "py-5")} >
-        <div className="flex h-5 items-center justify-between gap-3">
-          <h2 className="text-sm leading-5 font-medium">Discord 連携</h2>
-        </div>
-        <div className={cn("grid transition-[grid-template-rows,opacity] duration-300 ease-out", false ? "grid-rows-[0fr] opacity-0" : "grid-rows-[1fr] opacity-100")} aria-hidden={false}>
-        <div className="min-h-0 overflow-hidden"><div className="flex flex-col gap-3 pt-3">
-        {s.loggedIn ? (
-          <>
-            <p className="truncate text-muted-foreground">{s.email || "Lapount にログイン中"}</p>
-            <div className="flex gap-2">
-              <Button variant="secondary" className="h-10 flex-1" disabled={busy} onClick={() => run("send_test")}>
-                {busy ? <Loader2 className="size-4 animate-spin" /> : <Send className="size-4" />}テスト送信
-              </Button>
-              <Button variant="outline" className="h-10" onClick={() => invoke("logout")}>
-                <LogOut className="size-4" />ログアウト
-              </Button>
-            </div>
-          </>
-        ) : s.loginCode ? (
-          <div className="flex flex-col gap-2">
-            <p className="font-mono text-[28px] leading-9 font-medium tracking-[0.12em] select-text">{s.loginCode}</p>
-            <p className="flex items-center gap-2 text-muted-foreground">
-              <Loader2 className="size-4 flex-none animate-spin" />ブラウザで承認してください
-            </p>
-            <div className="flex gap-2">
-              <Button className="h-10 flex-1" disabled={busy} onClick={() => run("login")}>やり直す</Button>
-              <Button variant="outline" className="h-10" onClick={() => invoke("cancel_login")}>キャンセル</Button>
-            </div>
-          </div>
-        ) : (
-          <>
-            <p className="text-muted-foreground">Lapount でログインすると、連携済みの Discord に DM が届きます。</p>
-            <Button className="h-10" disabled={busy} onClick={() => run("login")}>Lapount でログイン</Button>
-          </>
-        )}
-        {s.loginError && <p className="text-destructive">{s.loginError}</p>}
+      <section className="rise flex flex-none flex-col gap-3 rounded-2xl bg-card p-5 shadow-[0_0_0_1px_var(--border)]" style={style(1)}>
+        <h2 className="text-sm leading-5 font-medium">Discord への通知</h2>
+        <p className="text-xs leading-5 text-muted-foreground">マッチ成立の DM が届くか確かめます。</p>
+        <Button variant="secondary" className="h-10" disabled={busy || !s.loggedIn} onClick={() => run("send_test")}>
+          {busy ? <Loader2 className="size-4 animate-spin" /> : <Send className="size-4" />}テスト送信
+        </Button>
         {s.lastNotify && (
-          <p className={cn("tabular-nums", s.lastNotify.ok ? "text-muted-foreground" : "text-destructive")}>
+          <p className={cn("text-xs leading-5 tabular-nums", s.lastNotify.ok ? "text-muted-foreground" : "text-destructive")}>
             {time(s.lastNotify.at)}　{s.lastNotify.message}
           </p>
         )}
         <BotHelp n={s.lastNotify} />
-        </div></div>
-        </div>
+        {!(s.lastNotify && !s.lastNotify.ok) && <div className="flex gap-4 text-xs leading-4 text-muted-foreground">
+          <button type="button" className="underline underline-offset-4 transition-colors duration-150 hover:text-foreground" onClick={() => openUrl(BOT_URL)}>Lapbot を追加</button>
+          <button type="button" className="underline underline-offset-4 transition-colors duration-150 hover:text-foreground" onClick={() => openUrl(SETUP_URL)}>追加方法</button>
+        </div>}
       </section>
-      <section className="rise flex h-12 flex-none items-center justify-between rounded-2xl bg-card px-5 shadow-[0_0_0_1px_var(--border)]" style={style(3)}>
+      <section className="rise flex h-14 flex-none items-center justify-between rounded-2xl bg-card px-5 shadow-[0_0_0_1px_var(--border)]" style={style(2)}>
         <label htmlFor="auto" className="text-sm leading-5">Windows の起動時に開始</label>
         <Switch id="auto" checked={auto} onCheckedChange={(v) => { setAuto(v); invoke("set_autostart", { on: v }); }} />
       </section>
+      <p className="rise px-1 font-mono text-xs leading-4 text-muted-foreground" style={style(3)}>v{__APP_VERSION__}</p>
       </>}
       </>}
     </main>
@@ -311,12 +316,12 @@ function ShareCard({ url, compact }: { url: string | null; compact: boolean }) {
   );
 }
 
-function Tabs({ tab, set }: { tab: "home" | "settings"; set: (t: "home" | "settings") => void }) {
-  const items = [["home", "ホーム"], ["settings", "設定"]] as const;
+function Tabs({ tab, set }: { tab: Tab; set: (t: Tab) => void }) {
+  const items = [["home", "ホーム"], ["account", "アカウント"], ["settings", "設定"]] as const;
   return (
     <nav className="rise flex h-10 flex-none gap-1 rounded-xl bg-secondary p-1" style={style(0)}>
       {items.map(([k, l]) => (
-        <button key={k} type="button" onClick={() => set(k)} className={cn("flex-1 rounded-lg text-sm leading-5 transition-[background-color,color] duration-150", tab === k ? "bg-card text-foreground shadow-[0_0_0_1px_var(--border)]" : "text-muted-foreground hover:text-foreground")}>{l}</button>
+        <button key={k} type="button" onClick={() => set(k)} className={cn("flex-1 rounded-lg text-sm leading-5 transition-[background-color,color,scale] duration-150 active:scale-[0.96]", tab === k ? "bg-card text-foreground shadow-[0_0_0_1px_var(--border)]" : "text-muted-foreground hover:text-foreground")}>{l}</button>
       ))}
     </nav>
   );
