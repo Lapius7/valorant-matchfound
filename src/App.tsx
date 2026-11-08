@@ -1,4 +1,5 @@
 import { useEffect, useState, type CSSProperties } from "react";
+import { createPortal } from "react-dom";
 import { invoke } from "@tauri-apps/api/core";
 import { listen } from "@tauri-apps/api/event";
 import { openUrl } from "@tauri-apps/plugin-opener";
@@ -280,7 +281,7 @@ function UpdateChip({ u }: { u: Snap["update"] }) {
       <Icon className={cn("size-3.5 flex-none", busy && "animate-spin")} />
       <span className="truncate">{u ? label : `v${__APP_VERSION__}`}</span>
     </button>
-      {ask && (
+      {ask && createPortal(
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-6" onClick={() => setAsk(false)}>
           <div role="alertdialog" aria-modal="true" className="w-full max-w-[300px] rounded-2xl bg-card p-5 shadow-[0_0_0_1px_var(--border)]" onClick={(e) => e.stopPropagation()}>
             <p className="text-sm leading-6 font-medium">アップデートしますか？</p>
@@ -290,7 +291,8 @@ function UpdateChip({ u }: { u: Snap["update"] }) {
               <Button size="sm" onClick={() => { setAsk(false); invoke("update_now"); }}>更新して再起動</Button>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body,
       )}
     </>
   );
