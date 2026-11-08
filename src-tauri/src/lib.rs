@@ -127,7 +127,7 @@ async fn send_to(st: &Shared, url: &str, body: serde_json::Value) -> Result<serd
             401 if attempt == 0 => continue,
             401 => return Err("ログインが無効です。もう一度ログインしてください".into()),
             403 => return Err("Lapount に Discord が連携されていません".into()),
-            409 => return Err("DM を受け取れない設定です。Lapbot と共通のサーバーで DM を許可してください".into()),
+            409 => return Err("DM を受け取れない設定です。Lapbot をアカウントに追加し、DM を許可してください".into()),
             _ => return Err(format!("送信に失敗しました ({status})")),
         }
     }

@@ -264,6 +264,10 @@ function AccountCard({ p, email }: { p: Profile | null; email: string }) {
           <p className="text-xs leading-4 text-muted-foreground">連携したあと、アプリを開き直すと反映されます。</p>
         </div>
       )}
+      <p className="text-xs leading-5 text-muted-foreground">
+        DM を受け取るには、Lapbot をアカウントに追加してください。
+        <button type="button" className="ml-1 underline underline-offset-4 transition-colors duration-150 hover:text-foreground" onClick={() => openUrl("https://lapbot.lapius7.com/application/valorant-matchfound")}>追加方法を見る</button>
+      </p>
       <dl className="flex flex-col gap-1.5 text-xs leading-4">
         {rows.map(([k, v]) => (
           <div key={k} className="flex justify-between gap-4">

@@ -21,9 +21,9 @@ VALORANT のマッチが成立した瞬間に、Discord へ DM でお知らせ�
 
 1. [Releases](https://github.com/Lapius7/valorant-matchfound/releases/latest) からインストーラーをダウンロードします。
 2. 実行して、アプリを開きます。
-3. [Lapbot をサーバーに追加](https://discord.com/oauth2/authorize?client_id=1470053949263577189&permissions=8&integration_type=1&scope=bot)します。DM は Lapbot と共通のサーバーがあるときだけ届きます。
+3. [Lapbot をアカウントに追加](https://discord.com/oauth2/authorize?client_id=1470053949263577189&integration_type=1&scope=applications.commands)します(ユーザーインストール)。DM を受け取るために必要です。
 4. **設定**タブでログインを押し、ブラウザで [Lapount](https://account.lapius7.com/dashboard) のアカウントを承認します。Lapount に Discord が連携されている必要があります。
-5. **テスト送信**で DM が届くか確かめます。届かないときは、Discord で Lapbot と共通のサーバーからの DM を許可してください。
+5. **テスト送信**で DM が届くか確かめます。届かないときは、Discord のプライバシー設定で Lapbot からの DM を許可してください。
 
 Windows 10 以降の 64 ビット版に対応しています。
 

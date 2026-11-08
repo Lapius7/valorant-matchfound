@@ -21,9 +21,9 @@ A Windows tray app that sends you a Discord DM the moment a VALORANT match is fo
 
 1. Download the installer from [Releases](https://github.com/Lapius7/valorant-matchfound/releases/latest).
 2. Run it and open the app.
-3. Add [Lapbot](https://discord.com/oauth2/authorize?client_id=1470053949263577189&permissions=8&integration_type=1&scope=bot) to a Discord server you are in. DMs are only delivered when you share a server with the bot.
+3. Install [Lapbot](https://discord.com/oauth2/authorize?client_id=1470053949263577189&integration_type=1&scope=applications.commands) to your Discord account (user install). It is needed to receive DMs.
 4. On the **Settings** tab, press the login button and approve it in your browser with your [Lapount](https://account.lapius7.com/dashboard) account. A Discord account must be linked to Lapount.
-5. Press **Test DM** to check that a message arrives. If it does not, allow DMs from servers you share with Lapbot in Discord.
+5. Press **Test DM** to check that a message arrives. If it does not, allow DMs from Lapbot in your Discord privacy settings.
 
 Requires Windows 10 or later (64-bit).
 
