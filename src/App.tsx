@@ -1,7 +1,8 @@
 import { useEffect, useState, type CSSProperties } from "react";
 import { invoke } from "@tauri-apps/api/core";
 import { listen } from "@tauri-apps/api/event";
-import { ArrowUpCircle, Check, Copy, Link2, Loader2, LogOut, RefreshCw, Send, Trash2 } from "lucide-react";
+import { openUrl } from "@tauri-apps/plugin-opener";
+import { ArrowUpCircle, Check, Copy, Link2, Loader2, LogOut, TriangleAlert, RefreshCw, Send, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { cn } from "@/lib/utils";
@@ -84,6 +85,12 @@ export default function App() {
         {s.matchInfo && <MatchPanel m={s.matchInfo} ingame={s.riot === "ingame"} />}
         
       </section>
+      {s.loggedIn && s.profile && !s.profile.discordId && (
+        <button type="button" onClick={() => setTab("settings")} className="rise flex items-center gap-3 rounded-2xl bg-card px-5 py-3 text-left text-sm leading-5 shadow-[0_0_0_1px_#d99a7c66] transition-[scale] duration-150 active:scale-[0.98]" style={style(2)}>
+          <TriangleAlert className="size-4 flex-none text-[#d99a7c]" aria-hidden />
+          <span>Discord が未連携のため DM は届きません。設定で連携してください。</span>
+        </button>
+      )}
       {s.loggedIn ? <ShareCard url={s.share} compact={compact} /> : (
         <button type="button" onClick={() => setTab("settings")} className="rise flex h-12 items-center justify-between rounded-2xl bg-card px-5 text-sm shadow-[0_0_0_1px_var(--border)] transition-[scale] duration-150 active:scale-[0.98]" style={style(2)}>
           <span className="text-muted-foreground">DM を受け取るには Lapount でログイン</span><span>設定へ</span>
@@ -247,6 +254,16 @@ function AccountCard({ p, email }: { p: Profile | null; email: string }) {
           <p className="truncate text-xs leading-4 text-muted-foreground">{p?.discordUser ? `@${p.discordUser}` : "Lapount ログイン中"}</p>
         </div>
       </div>
+      {p && !p.discordId && (
+        <div role="alert" className="flex flex-col gap-3 rounded-xl bg-secondary p-4">
+          <p className="flex items-start gap-2 text-sm leading-5">
+            <TriangleAlert className="mt-0.5 size-4 flex-none text-[#d99a7c]" aria-hidden />
+            <span>Lapount に Discord が連携されていません。連携すると、マッチ成立の DM が届きます。</span>
+          </p>
+          <Button variant="secondary" className="h-10 bg-card" onClick={() => openUrl("https://account.lapius7.com/dashboard")}>Lapount で Discord を連携する</Button>
+          <p className="text-xs leading-4 text-muted-foreground">連携したあと、アプリを開き直すと反映されます。</p>
+        </div>
+      )}
       <dl className="flex flex-col gap-1.5 text-xs leading-4">
         {rows.map(([k, v]) => (
           <div key={k} className="flex justify-between gap-4">
