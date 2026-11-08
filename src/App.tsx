@@ -193,7 +193,8 @@ export default function App() {
         <p className="text-[22px] leading-8 font-medium tracking-[-0.02em]">{p.label}</p>
         {!s.matchInfo && <p className="min-h-5 text-muted-foreground">{p.hint}</p>}
         {s.matchInfo && <MatchPanel m={s.matchInfo} ingame={s.riot === "ingame"} />}
-        {!s.matchInfo && s.party.length > 1 && (
+        {!s.matchInfo && s.party.length > 0 && (<>
+          <p className="pt-1 text-xs leading-4 text-muted-foreground">パーティー（{s.party.length}/5）</p>
           <ul className="grid gap-1.5 pt-1">
             {s.party.map((m) => (
               <li key={m.name} className="flex h-7 items-center justify-between gap-3 text-sm leading-5">
@@ -201,7 +202,7 @@ export default function App() {
                 <span className="flex-none text-xs text-muted-foreground tabular-nums">{m.rank || "—"}{m.level ? ` / Lv ${m.level}` : ""}</span>
               </li>
             ))}
-          </ul>
+          </ul></>
         )}
         
       </section>

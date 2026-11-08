@@ -301,7 +301,7 @@ async fn monitor(app: AppHandle, st: St) {
 
         // ロビーのパーティー(メニュー/待機中だけ。変わったときだけ画面へ反映)
         {
-            let pty: Vec<serde_json::Value> = if matches!(p.phase, riot::Phase::Menus | riot::Phase::Queue) && p.party.len() > 1 {
+            let pty: Vec<serde_json::Value> = if matches!(p.phase, riot::Phase::Menus | riot::Phase::Queue) && !p.party.is_empty() {
                 p.party.iter().map(|m| serde_json::json!({
                     "name": m["name"], "me": m["me"], "level": m["level"],
                     "rank": names.tiers.get(&m["tier"].as_u64().unwrap_or(0)).cloned().unwrap_or_default(),
