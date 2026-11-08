@@ -143,12 +143,14 @@ const style = (i: number) => ({ "--i": i }) as CSSProperties;
 export default function App() {
   const [s, setS] = useState<Snap | null>(null);
   const [auto, setAuto] = useState(false);
+  const [bootShow, setBootShow] = useState(false);
   const [busy, setBusy] = useState(false);
   const [tab, setTab] = useState<Tab>("home");
 
   useEffect(() => {
     invoke<Snap>("get_state").then(setS);
     invoke<boolean>("get_autostart").then(setAuto);
+    invoke<boolean>("get_boot_show").then(setBootShow);
     const un = listen<Snap>("state", (e) => setS(e.payload));
     return () => void un.then((f) => f());
   }, []);
@@ -238,6 +240,10 @@ export default function App() {
       <section className="rise flex h-14 flex-none items-center justify-between rounded-2xl bg-card px-5 shadow-[0_0_0_1px_var(--border)]" style={style(2)}>
         <label htmlFor="auto" className="text-sm leading-5">Windows の起動時に開始</label>
         <Switch id="auto" checked={auto} onCheckedChange={(v) => { setAuto(v); invoke("set_autostart", { on: v }); }} />
+      </section>
+      <section className="rise flex h-14 flex-none items-center justify-between rounded-2xl bg-card px-5 shadow-[0_0_0_1px_var(--border)]" style={style(3)}>
+        <label htmlFor="bootshow" className="text-sm leading-5">起動時に画面を表示</label>
+        <Switch id="bootshow" checked={bootShow} onCheckedChange={(v) => { setBootShow(v); invoke("set_boot_show", { on: v }); }} />
       </section>
       <section className="rise grid gap-1 rounded-2xl bg-card p-5 text-xs leading-5 text-muted-foreground shadow-[0_0_0_1px_var(--border)]" style={style(3)}>
           <p className="text-sm leading-5 font-medium text-foreground">お問い合わせ</p>

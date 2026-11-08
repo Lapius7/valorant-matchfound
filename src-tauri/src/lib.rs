@@ -62,6 +62,15 @@ fn get_state(st: State<'_, St>) -> Snapshot { st.snap.lock().unwrap().clone() }
 #[tauri::command]
 fn get_autostart(app: AppHandle) -> bool { app.autolaunch().is_enabled().unwrap_or(false) }
 
+fn boot_flag(app: &AppHandle) -> Option<std::path::PathBuf> { app.path().app_data_dir().ok().map(|d| d.join("show_on_boot")) }
+#[tauri::command]
+fn get_boot_show(app: AppHandle) -> bool { boot_flag(&app).map(|f| f.exists()).unwrap_or(false) }
+#[tauri::command]
+fn set_boot_show(app: AppHandle, on: bool) {
+    let Some(f) = boot_flag(&app) else { return };
+    if on { let _ = std::fs::create_dir_all(f.parent().unwrap()); let _ = std::fs::write(f, "1"); } else { let _ = std::fs::remove_file(f); }
+}
+
 #[tauri::command]
 fn set_autostart(app: AppHandle, on: bool) -> Result<(), String> {
     let a = app.autolaunch();
@@ -477,7 +486,7 @@ pub fn run() {
         .plugin(tauri_plugin_opener::init())
         .plugin(tauri_plugin_autostart::init(tauri_plugin_autostart::MacosLauncher::LaunchAgent, Some(vec!["--hidden"])))
         .manage(st.clone())
-        .invoke_handler(tauri::generate_handler![get_state, get_autostart, set_autostart, login, cancel_login, refresh_profile, logout, send_test, update_now, check_update, share_op])
+        .invoke_handler(tauri::generate_handler![get_state, get_autostart, set_autostart, get_boot_show, set_boot_show, login, cancel_login, refresh_profile, logout, send_test, update_now, check_update, share_op])
         .on_window_event(|w, e| {
             // ×ボタンはトレイへ隠すだけにする
             if let tauri::WindowEvent::CloseRequested { api, .. } = e {
@@ -512,7 +521,7 @@ pub fn run() {
                     }
                 })
                 .build(app)?;
-            if !std::env::args().any(|a| a == "--hidden") {
+            if !std::env::args().any(|a| a == "--hidden") || get_boot_show(app.handle().clone()) {
                 show(app.handle());
             }
             tauri::async_runtime::spawn(monitor(app.handle().clone(), st.clone()));
