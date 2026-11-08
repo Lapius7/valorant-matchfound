@@ -344,7 +344,7 @@ async fn monitor(app: AppHandle, st: St) {
         why = p.raw_keys.clone();
         first = false;
         sync_share(&st);
-        if last_ping.elapsed().as_secs() >= 30 {
+        if last_ping.elapsed().as_secs() >= 5 {
             last_ping = std::time::Instant::now();
             if st.snap.lock().unwrap().logged_in {
                 let st2 = st.clone();

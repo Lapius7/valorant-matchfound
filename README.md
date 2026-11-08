@@ -54,7 +54,7 @@ The **Share URL** card on the Home tab issues `https://lapbot.lapius7.com/system
 | --- | --- |
 | Match info (mode, map, player names, agents) | Lapbot API, then your Discord DM and the share page |
 | Lapount refresh token and email | Windows Credential Manager on your PC |
-| Usage count | While the app runs and you are logged in, it pings Lapbot every 30 seconds. Only a hash of your Lapount ID is kept, to show the install and online counts |
+| Usage count | While the app runs and you are logged in, it pings Lapbot every 5 seconds. Only a hash of your Lapount ID is kept, to show the install and online counts |
 | Riot credentials | Used only to talk to Riot on your PC. Never sent to Lapbot |
 
 ## Terms of service
