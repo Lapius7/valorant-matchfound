@@ -75,7 +75,7 @@ cargo build --release --target x86_64-pc-windows-gnu
 The installer is built with [Inno Setup 6](https://jrsoftware.org/isinfo.php):
 
 ```bash
-ISCC.exe /DAppVersion=0.0.2 installer/valorant-matchfound.iss
+ISCC.exe /DAppVersion=0.0.3 installer/valorant-matchfound.iss
 ```
 
 Stack: Tauri v2, Rust, React, Vite, Tailwind CSS v4, shadcn/ui.
