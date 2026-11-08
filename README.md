@@ -54,7 +54,7 @@ The **Share URL** card on the Home tab issues `https://lapbot.lapius7.com/system
 | --- | --- |
 | Match info (mode, map, player names, agents) | Lapbot API, then your Discord DM and the share page |
 | Lapount refresh token and email | Windows Credential Manager on your PC |
-| Usage count | While the app runs and you are logged in, it pings Lapbot every 5 seconds. Only a hash of your Lapount ID is kept, to show the install and online counts |
+| Usage count | While the app runs and you are logged in, it pings Lapbot every 5 seconds. Your Lapount ID, Discord ID, first/last-seen times and ping/DM counts are kept for the install and online counts and for troubleshooting. Only anonymous totals are public; per-user details are visible to the developer only |
 | Riot credentials | Used only to talk to Riot on your PC. Never sent to Lapbot |
 
 ## Terms of service
@@ -75,7 +75,7 @@ cargo build --release --target x86_64-pc-windows-gnu
 The installer is built with [Inno Setup 6](https://jrsoftware.org/isinfo.php):
 
 ```bash
-ISCC.exe /DAppVersion=0.0.4 installer/valorant-matchfound.iss
+ISCC.exe /DAppVersion=0.0.5 installer/valorant-matchfound.iss
 ```
 
 Stack: Tauri v2, Rust, React, Vite, Tailwind CSS v4, shadcn/ui.

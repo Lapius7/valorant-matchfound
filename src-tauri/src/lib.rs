@@ -190,7 +190,7 @@ fn set_update(app: &AppHandle, st: &Shared, state: &str, version: &str, message:
 }
 
 // 更新を確認する。manual なら見つけ次第すぐ入れる。自動のときは試合中を避け、true を返して再試行を促す
-async fn do_update(app: &AppHandle, st: &Shared, manual: bool) -> bool {
+async fn do_update(app: &AppHandle, st: &Shared, install: bool) -> bool {
     if matches!(st.snap.lock().unwrap().update.as_ref().and_then(|u| u["state"].as_str()), Some("checking" | "downloading")) { return false; }
     set_update(app, st, "checking", "", "");
     let rel = match update::check(&st.http).await {
@@ -198,8 +198,7 @@ async fn do_update(app: &AppHandle, st: &Shared, manual: bool) -> bool {
         Ok(None) => { set_update(app, st, "none", "", "最新版です"); return false; }
         Err(m) => { set_update(app, st, "error", "", &m); return false; }
     };
-    let busy = matches!(st.snap.lock().unwrap().riot.as_str(), "pregame" | "ingame");
-    if busy && !manual { set_update(app, st, "available", &rel.version, "試合が終わったら更新します"); return true; }
+    if !install { set_update(app, st, "available", &rel.version, "新しい版があります"); return false; }
     set_update(app, st, "downloading", &rel.version, "");
     match update::download(&rel).await {
         Ok(path) => match update::launch(&path) {
@@ -216,12 +215,18 @@ async fn update_now(app: AppHandle, st: State<'_, St>) -> Result<(), String> {
     Ok(())
 }
 
-// 起動直後と 6 時間ごとに確認する(試合中は 5 分後にやり直す)
+// 確認だけ行う(入れない)
+#[tauri::command]
+async fn check_update(app: AppHandle, st: State<'_, St>) -> Result<(), String> {
+    do_update(&app, &st, false).await;
+    Ok(())
+}
+
+// 起動直後と 6 時間ごとに確認する。見つけても入れず、表示だけにする
 async fn auto_update(app: AppHandle, st: St) {
-    tokio::time::sleep(std::time::Duration::from_secs(8)).await;
     loop {
-        let deferred = do_update(&app, &st, false).await;
-        tokio::time::sleep(std::time::Duration::from_secs(if deferred { 300 } else { 6 * 3600 })).await;
+        do_update(&app, &st, false).await;
+        tokio::time::sleep(std::time::Duration::from_secs(6 * 3600)).await;
     }
 }
 
@@ -417,7 +422,7 @@ pub fn run() {
         .plugin(tauri_plugin_opener::init())
         .plugin(tauri_plugin_autostart::init(tauri_plugin_autostart::MacosLauncher::LaunchAgent, Some(vec!["--hidden"])))
         .manage(st.clone())
-        .invoke_handler(tauri::generate_handler![get_state, get_autostart, set_autostart, login, cancel_login, refresh_profile, logout, send_test, update_now, share_op])
+        .invoke_handler(tauri::generate_handler![get_state, get_autostart, set_autostart, login, cancel_login, refresh_profile, logout, send_test, update_now, check_update, share_op])
         .on_window_event(|w, e| {
             // ×ボタンはトレイへ隠すだけにする
             if let tauri::WindowEvent::CloseRequested { api, .. } = e {
@@ -441,7 +446,7 @@ pub fn run() {
                     "update" => {
                         show(app);
                         let (a, st) = (app.clone(), app.state::<St>().inner().clone());
-                        tauri::async_runtime::spawn(async move { do_update(&a, &st, true).await; });
+                        tauri::async_runtime::spawn(async move { do_update(&a, &st, false).await; });
                     }
                     "quit" => app.exit(0),
                     _ => {}

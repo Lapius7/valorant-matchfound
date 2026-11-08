@@ -271,7 +271,7 @@ function UpdateChip({ u }: { u: Snap["update"] }) {
       type="button"
       disabled={busy}
       title={u?.message || undefined}
-      onClick={() => setAsk(true)}
+      onClick={() => (u?.state === "available" ? setAsk(true) : invoke("check_update"))}
       className={cn(
         "group relative flex h-8 max-w-[260px] items-center gap-1.5 rounded-full px-3 font-mono text-xs leading-4 transition-[background-color,color,scale] duration-150 active:scale-[0.96] before:absolute before:-inset-1 before:content-['']",
         u?.state === "error" ? "text-destructive" : u?.state === "available" ? "bg-signal/15 text-signal" : "text-muted-foreground hover:bg-card hover:text-foreground",
@@ -284,7 +284,7 @@ function UpdateChip({ u }: { u: Snap["update"] }) {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-6" onClick={() => setAsk(false)}>
           <div role="alertdialog" aria-modal="true" className="w-full max-w-[300px] rounded-2xl bg-card p-5 shadow-[0_0_0_1px_var(--border)]" onClick={(e) => e.stopPropagation()}>
             <p className="text-sm leading-6 font-medium">アップデートしますか？</p>
-            <p className="mt-1 text-xs leading-5 text-muted-foreground">新しい版があれば更新し、アプリを再起動します。</p>
+            <p className="mt-1 text-xs leading-5 text-muted-foreground">v{u?.version} に更新し、アプリを再起動します。</p>
             <div className="mt-4 flex justify-end gap-2">
               <Button variant="ghost" size="sm" onClick={() => setAsk(false)}>キャンセル</Button>
               <Button size="sm" onClick={() => { setAsk(false); invoke("update_now"); }}>更新して再起動</Button>

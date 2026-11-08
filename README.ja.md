@@ -54,7 +54,7 @@ VALORANT - Riot Client ローカル API -> アプリ -> Lapbot API -> Discord DM
 | --- | --- |
 | マッチ情報(モード、マップ、プレイヤー名、エージェント) | Lapbot API。そこから Discord の DM と観戦ページへ |
 | Lapount の refresh token とメールアドレス | 自分の PC の資格情報マネージャー |
-| 利用者数 | ログイン中にアプリが動いている間、30秒ごとに Lapbot へ ping を送ります。インストール数とオンライン数の表示のため、Lapount ID のハッシュだけを保存します |
+| 利用者数 | ログイン中にアプリが動いている間、30秒ごとに Lapbot へ ping を送ります。インストール数とオンライン数の表示と、不具合の調査のため、Lapount ID・Discord ID・初回と最後に使った時刻・ping と DM の回数を保存します。人数の推移は匿名の集計だけを公開し、個人ごとの情報は開発者だけが見られます |
 | Riot の認証情報 | 自分の PC で Riot と通信するときだけ使い、Lapbot には送りません |
 
 ## 利用規約について
@@ -75,7 +75,7 @@ cargo build --release --target x86_64-pc-windows-gnu
 インストーラーは [Inno Setup 6](https://jrsoftware.org/isinfo.php) で作ります。
 
 ```bash
-ISCC.exe /DAppVersion=0.0.4 installer/valorant-matchfound.iss
+ISCC.exe /DAppVersion=0.0.5 installer/valorant-matchfound.iss
 ```
 
 構成: Tauri v2、Rust、React、Vite、Tailwind CSS v4、shadcn/ui。
