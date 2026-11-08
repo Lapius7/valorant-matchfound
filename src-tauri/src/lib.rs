@@ -233,6 +233,7 @@ async fn monitor(app: AppHandle, st: St) {
     if auth::load().is_some() { let _ = share_call(&app, &st, "status").await; load_profile(&app, &st).await; }
     let mut prev = riot::Phase::Closed;
     let mut first = true;
+    let mut last_ping = std::time::Instant::now() - std::time::Duration::from_secs(60);
     let mut why = String::new();
     let mut msg: Option<String> = None;
     let mut shown: Vec<pregame::Player> = Vec::new();
@@ -328,6 +329,13 @@ async fn monitor(app: AppHandle, st: St) {
         why = p.raw_keys.clone();
         first = false;
         sync_share(&st);
+        if last_ping.elapsed().as_secs() >= 30 {
+            last_ping = std::time::Instant::now();
+            if st.snap.lock().unwrap().logged_in {
+                let st2 = st.clone();
+                tokio::spawn(async move { let _ = send_to(&st2, config::PING_URL, serde_json::json!({})).await; });
+            }
+        }
         tokio::time::sleep(std::time::Duration::from_millis(config::POLL_MS)).await;
     }
 }

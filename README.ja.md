@@ -21,8 +21,9 @@ VALORANT のマッチが成立した瞬間に、Discord へ DM でお知らせ�
 
 1. [Releases](https://github.com/Lapius7/valorant-matchfound/releases/latest) からインストーラーをダウンロードします。
 2. 実行して、アプリを開きます。
-3. **設定**タブでログインを押し、ブラウザで [Lapount](https://account.lapius7.com/dashboard) のアカウントを承認します。Lapount に Discord が連携されている必要があります。
-4. **テスト送信**で DM が届くか確かめます。届かないときは、Discord で Lapbot と共通のサーバーからの DM を許可してください。
+3. [Lapbot をサーバーに追加](https://discord.com/oauth2/authorize?client_id=1470053949263577189&permissions=8&integration_type=1&scope=bot)します。DM は Lapbot と共通のサーバーがあるときだけ届きます。
+4. **設定**タブでログインを押し、ブラウザで [Lapount](https://account.lapius7.com/dashboard) のアカウントを承認します。Lapount に Discord が連携されている必要があります。
+5. **テスト送信**で DM が届くか確かめます。届かないときは、Discord で Lapbot と共通のサーバーからの DM を許可してください。
 
 Windows 10 以降の 64 ビット版に対応しています。
 
@@ -53,6 +54,7 @@ VALORANT - Riot Client ローカル API -> アプリ -> Lapbot API -> Discord DM
 | --- | --- |
 | マッチ情報(モード、マップ、プレイヤー名、エージェント) | Lapbot API。そこから Discord の DM と観戦ページへ |
 | Lapount の refresh token とメールアドレス | 自分の PC の資格情報マネージャー |
+| 利用者数 | ログイン中にアプリが動いている間、30秒ごとに Lapbot へ ping を送ります。インストール数とオンライン数の表示のため、Lapount ID のハッシュだけを保存します |
 | Riot の認証情報 | 自分の PC で Riot と通信するときだけ使い、Lapbot には送りません |
 
 ## 利用規約について

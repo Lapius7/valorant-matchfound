@@ -21,8 +21,9 @@ A Windows tray app that sends you a Discord DM the moment a VALORANT match is fo
 
 1. Download the installer from [Releases](https://github.com/Lapius7/valorant-matchfound/releases/latest).
 2. Run it and open the app.
-3. On the **Settings** tab, press the login button and approve it in your browser with your [Lapount](https://account.lapius7.com/dashboard) account. A Discord account must be linked to Lapount.
-4. Press **Test DM** to check that a message arrives. If it does not, allow DMs from servers you share with Lapbot in Discord.
+3. Add [Lapbot](https://discord.com/oauth2/authorize?client_id=1470053949263577189&permissions=8&integration_type=1&scope=bot) to a Discord server you are in. DMs are only delivered when you share a server with the bot.
+4. On the **Settings** tab, press the login button and approve it in your browser with your [Lapount](https://account.lapius7.com/dashboard) account. A Discord account must be linked to Lapount.
+5. Press **Test DM** to check that a message arrives. If it does not, allow DMs from servers you share with Lapbot in Discord.
 
 Requires Windows 10 or later (64-bit).
 
@@ -53,6 +54,7 @@ The **Share URL** card on the Home tab issues `https://lapbot.lapius7.com/system
 | --- | --- |
 | Match info (mode, map, player names, agents) | Lapbot API, then your Discord DM and the share page |
 | Lapount refresh token and email | Windows Credential Manager on your PC |
+| Usage count | While the app runs and you are logged in, it pings Lapbot every 30 seconds. Only a hash of your Lapount ID is kept, to show the install and online counts |
 | Riot credentials | Used only to talk to Riot on your PC. Never sent to Lapbot |
 
 ## Terms of service
