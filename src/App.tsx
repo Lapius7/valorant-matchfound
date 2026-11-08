@@ -21,6 +21,7 @@ type Snap = {
   matchInfo: MatchInfo | null;
   share: string | null;
   profile: Profile | null;
+  botMissing: boolean;
   update: { state: "checking" | "none" | "available" | "downloading" | "error"; version: string; message: string } | null;
 };
 
@@ -85,6 +86,12 @@ export default function App() {
         {s.matchInfo && <MatchPanel m={s.matchInfo} ingame={s.riot === "ingame"} />}
         
       </section>
+      {s.loggedIn && s.botMissing && (
+        <button type="button" onClick={() => openUrl("https://lapbot.lapius7.com/application/valorant-matchfound/setup")} className="rise flex items-center gap-3 rounded-2xl bg-card px-5 py-3 text-left text-sm leading-5 shadow-[0_0_0_1px_#d99a7c66] transition-[scale] duration-150 active:scale-[0.98]" style={style(2)}>
+          <TriangleAlert className="size-4 flex-none text-[#d99a7c]" aria-hidden />
+          <span>Lapbot が未追加のため DM が届きません。追加方法を開く</span>
+        </button>
+      )}
       {s.loggedIn && s.profile && !s.profile.discordId && (
         <button type="button" onClick={() => setTab("settings")} className="rise flex items-center gap-3 rounded-2xl bg-card px-5 py-3 text-left text-sm leading-5 shadow-[0_0_0_1px_#d99a7c66] transition-[scale] duration-150 active:scale-[0.98]" style={style(2)}>
           <TriangleAlert className="size-4 flex-none text-[#d99a7c]" aria-hidden />
@@ -98,7 +105,7 @@ export default function App() {
       )}
       </>}
       {tab === "settings" && <>
-      {s.loggedIn && <AccountCard p={s.profile} email={s.email} />}
+      {s.loggedIn && <AccountCard p={s.profile} email={s.email} botMissing={s.botMissing} />}
       <section className={cn("flex flex-none flex-col rounded-2xl bg-card px-5 shadow-[0_0_0_1px_var(--border)] transition-[padding] duration-300", false ? "py-3.5" : "py-5")} >
         <div className="flex h-5 items-center justify-between gap-3">
           <h2 className="text-sm leading-5 font-medium">Discord 連携</h2>
@@ -238,7 +245,7 @@ function Tabs({ tab, set }: { tab: "home" | "settings"; set: (t: "home" | "setti
 const day = (v: string) => (v ? new Date(v).toLocaleString("ja-JP", { dateStyle: "medium", timeStyle: "short" }) : "—");
 
 // ログイン中の Lapount アカウントと、連携している Discord の詳細
-function AccountCard({ p, email }: { p: Profile | null; email: string }) {
+function AccountCard({ p, email, botMissing }: { p: Profile | null; email: string; botMissing: boolean }) {
   const rows: [string, string][] = [
     ["Discord 名", p?.discordName || "—"],
     ["Discord ユーザー名", p?.discordUser || "—"],
@@ -268,9 +275,9 @@ function AccountCard({ p, email }: { p: Profile | null; email: string }) {
           <p className="text-xs leading-4 text-muted-foreground">連携したあと、アプリを開き直すと反映されます。</p>
         </div>
       )}
-      <p className="text-xs leading-5 text-muted-foreground">
-        DM を受け取るには、Lapbot をアカウントに追加してください。
-        <button type="button" className="ml-1 underline underline-offset-4 transition-colors duration-150 hover:text-foreground" onClick={() => openUrl("https://lapbot.lapius7.com/application/valorant-matchfound")}>追加方法を見る</button>
+      <p className={cn("text-xs leading-5", botMissing ? "rounded-xl bg-secondary p-3 text-sm text-foreground" : "text-muted-foreground")}>
+        {botMissing ? "Lapbot がアカウントに追加されていないため、DM が届きません。" : "DM を受け取るには、Lapbot をアカウントに追加してください。"}
+        <button type="button" className="ml-1 underline underline-offset-4 transition-colors duration-150 hover:text-foreground" onClick={() => openUrl("https://lapbot.lapius7.com/application/valorant-matchfound/setup")}>追加方法を見る</button>
       </p>
       <dl className="flex flex-col gap-1.5 text-xs leading-4">
         {rows.map(([k, v]) => (

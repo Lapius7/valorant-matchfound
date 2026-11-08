@@ -26,6 +26,7 @@ struct Snapshot {
     update: Option<serde_json::Value>,
     share: Option<String>,
     profile: Option<serde_json::Value>,
+    bot_missing: bool,
 }
 
 #[derive(Serialize, Clone)]
@@ -113,7 +114,7 @@ async fn notify(app: &AppHandle, st: &Shared, body: serde_json::Value) -> Option
         Ok(v) => (true, "Discord に DM を送りました".to_string(), v["messageId"].as_str().map(String::from)),
         Err(m) => (false, m, None),
     };
-    push(app, st, |s| s.last_notify = Some(Notify { at: auth::now(), ok, message }));
+    push(app, st, |s| { s.bot_missing = !ok && message.starts_with("DM を受け取れない"); s.last_notify = Some(Notify { at: auth::now(), ok, message }); });
     id
 }
 
