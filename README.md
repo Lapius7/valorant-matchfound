@@ -1,10 +1,10 @@
-# Valorant Matchfound
+# VALORANT Matchfound
 
 English | [日本語](README.ja.md)
 
 A Windows tray app that sends you a Discord DM the moment a VALORANT match is found. The DM shows the mode, the map and each teammate's agent pick, and it keeps updating until the match ends.
 
-![Valorant Matchfound](docs/images/hero.png)
+![VALORANT Matchfound](docs/images/hero.png)
 
 > **Unofficial.** This is a personal project. It is not made, endorsed or supported by Riot Games. VALORANT is a trademark of Riot Games, Inc.
 

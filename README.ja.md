@@ -1,10 +1,10 @@
-# Valorant Matchfound
+# VALORANT Matchfound
 
 [English](README.md) | 日本語
 
 VALORANT のマッチが成立した瞬間に、Discord へ DM でお知らせする Windows のタスクトレイアプリです。DM にはモード、マップ、味方のエージェントのピックが載り、試合が終わるまで自動で書き換わります。
 
-![Valorant Matchfound](docs/images/hero.png)
+![VALORANT Matchfound](docs/images/hero.png)
 
 > **非公式のツールです。** 個人が作ったもので、Riot Games とは関係なく、公認も支援も受けていません。VALORANT は Riot Games, Inc. の商標です。
 
