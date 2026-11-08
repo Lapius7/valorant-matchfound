@@ -23,6 +23,7 @@ struct Snapshot {
     login_error: Option<String>,
     last_notify: Option<Notify>,
     match_info: Option<serde_json::Value>,
+    party: Vec<serde_json::Value>,
     update: Option<serde_json::Value>,
     share: Option<String>,
     profile: Option<serde_json::Value>,
@@ -282,12 +283,24 @@ async fn monitor(app: AppHandle, st: St) {
     let mut next_board = 0u64;
     let mut board_tries = 0u32;          // 終了後のスコア取得の試行回数
     let mut id_tried = false;
+    let mut party_now: Vec<serde_json::Value> = vec![];
     let mut away = 0u32;                 // 試合の画面から外れた連続回数(一瞬の取得失敗を終了と見なさないため)
     let mut saved = load_state(&app);    // 前回の起動から引き継ぐ試合
     loop {
         let p = riot::probe(&st.riot_http).await;
         let in_match = matches!(p.phase, riot::Phase::Pregame | riot::Phase::Ingame);
 
+        // ロビーのパーティー(メニュー/待機中だけ。変わったときだけ画面へ反映)
+        {
+            let pty: Vec<serde_json::Value> = if matches!(p.phase, riot::Phase::Menus | riot::Phase::Queue) && p.party.len() > 1 {
+                p.party.iter().map(|m| serde_json::json!({
+                    "name": m["name"], "me": m["me"], "level": m["level"],
+                    "rank": names.tiers.get(&m["tier"].as_u64().unwrap_or(0)).cloned().unwrap_or_default(),
+                })).collect()
+            } else { vec![] };
+            if st.snap.lock().unwrap().party != pty { push(&app, &st, |s| s.party = pty.clone()); }
+            party_now = pty;
+        }
         // 試合 ID が無いまま試合中(再起動で引き継いだ場合など): 試合の ID を 1 回だけ取りに行く
         if p.phase == riot::Phase::Ingame && msg.is_some() && v.match_id.is_empty() && !id_tried {
             id_tried = true;
@@ -336,7 +349,9 @@ async fn monitor(app: AppHandle, st: St) {
                 && app.path().app_data_dir().map(|d| d.join("queue_notify").exists()).unwrap_or(false) {
                 let mut q = View::default();
                 q.mode = pregame::mode_name(&p.mode);
-                let _ = notify(&app, &st, q.body("queue", &shown)).await;
+                let mut b = q.body("queue", &shown);
+                b["party"] = serde_json::Value::Array(party_now.clone());
+                let _ = notify(&app, &st, b).await;
             }
             prev = p.phase.clone();
         }

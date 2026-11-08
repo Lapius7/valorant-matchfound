@@ -13,7 +13,7 @@ impl Phase {
     }
 }
 
-pub struct Probe { pub phase: Phase, pub mode: String, pub map: String, pub raw_keys: String }
+pub struct Probe { pub phase: Phase, pub mode: String, pub map: String, pub raw_keys: String, pub party: Vec<Value> }
 
 pub fn lockfile() -> Option<(u16, String)> {
     let p = std::path::PathBuf::from(std::env::var("LOCALAPPDATA").ok()?)
@@ -25,7 +25,7 @@ pub fn lockfile() -> Option<(u16, String)> {
 
 // Riot Client のローカル API(画面は読まない)。自分の presence だけを見る
 pub async fn probe(c: &reqwest::Client) -> Probe {
-    let none = |p: Phase, why: &str| Probe { phase: p, mode: String::new(), map: String::new(), raw_keys: why.to_string() };
+    let none = |p: Phase, why: &str| Probe { phase: p, mode: String::new(), map: String::new(), raw_keys: why.to_string(), party: vec![] };
     let Some((port, pw)) = lockfile() else { return none(Phase::Closed, "no lockfile") };
     let get = |path: &str| {
         c.get(format!("https://127.0.0.1:{port}{path}")).basic_auth("riot", Some(&pw)).send()
@@ -53,10 +53,27 @@ pub async fn probe(c: &reqwest::Client) -> Probe {
         _ => Phase::Menus,
     };
     let s = |v: &Value| v.as_str().unwrap_or("").to_string();
+    // 同じパーティーのメンバー(presence に出ている人だけ。追加の通信はしない)
+    let pid = s(&p["partyPresenceData"]["partyId"]);
+    let mut party: Vec<Value> = vec![];
+    if !pid.is_empty() {
+        for x in pr["presences"].as_array().into_iter().flatten() {
+            if x["product"].as_str() != Some("valorant") { continue; }
+            let Some(pb) = x["private"].as_str().and_then(|b| base64::engine::general_purpose::STANDARD.decode(b).ok()).and_then(|b| serde_json::from_slice::<Value>(&b).ok()) else { continue };
+            if pb["partyPresenceData"]["partyId"].as_str() != Some(pid.as_str()) { continue; }
+            let name = format!("{}#{}", s(&x["game_name"]), s(&x["game_tag"]));
+            party.push(serde_json::json!({
+                "name": name, "me": x["puuid"].as_str() == Some(puuid),
+                "tier": pb["playerPresenceData"]["competitiveTier"].as_u64().unwrap_or(0),
+                "level": pb["playerPresenceData"]["accountLevel"].as_u64().unwrap_or(0),
+            }));
+        }
+        party.sort_by_key(|m| !m["me"].as_bool().unwrap_or(false));
+    }
     Probe {
         phase,
         mode: { let a = s(&p["partyPresenceData"]["queueId"]); if a.is_empty() { s(&p["queueId"]) } else { a } },
         map: { let a = s(&p["matchPresenceData"]["matchMap"]); if a.is_empty() { s(&p["matchMap"]) } else { a } },
-        raw_keys: format!("loop={loop_state} party={party_state}"),
+        raw_keys: format!("loop={loop_state} party={party_state}"), party,
     }
 }

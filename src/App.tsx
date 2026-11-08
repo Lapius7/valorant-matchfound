@@ -20,6 +20,7 @@ type Snap = {
   loginError: string | null;
   lastNotify: Notify | null;
   matchInfo: MatchInfo | null;
+  party: { name: string; me: boolean; level: number; rank: string }[];
   share: string | null;
   profile: Profile | null;
   botMissing: boolean;
@@ -190,6 +191,16 @@ export default function App() {
         <p className="text-[22px] leading-8 font-medium tracking-[-0.02em]">{p.label}</p>
         {!s.matchInfo && <p className="min-h-5 text-muted-foreground">{p.hint}</p>}
         {s.matchInfo && <MatchPanel m={s.matchInfo} ingame={s.riot === "ingame"} />}
+        {!s.matchInfo && s.party.length > 1 && (
+          <ul className="grid gap-1.5 pt-1">
+            {s.party.map((m) => (
+              <li key={m.name} className="flex h-7 items-center justify-between gap-3 text-sm leading-5">
+                <span className="min-w-0 truncate">{m.name}{m.me && <span className="ml-1.5 text-xs text-muted-foreground">あなた</span>}</span>
+                <span className="flex-none text-xs text-muted-foreground tabular-nums">{m.rank || "—"}{m.level ? ` / Lv ${m.level}` : ""}</span>
+              </li>
+            ))}
+          </ul>
+        )}
         
       </section>
       {s.loggedIn && s.botMissing && (
