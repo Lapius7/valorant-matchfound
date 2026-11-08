@@ -27,6 +27,7 @@ struct Snapshot {
     share: Option<String>,
     profile: Option<serde_json::Value>,
     bot_missing: bool,
+    setup_done: bool,
 }
 
 #[derive(Serialize, Clone)]
@@ -103,6 +104,9 @@ fn cancel_login(app: AppHandle, st: State<'_, St>) {
 }
 
 #[tauri::command]
+async fn refresh_profile(app: AppHandle, st: State<'_, St>) -> Result<(), String> { let st = st.inner().clone(); load_profile(&app, &st).await; Ok(()) }
+
+#[tauri::command]
 fn logout(app: AppHandle, st: State<'_, St>) {
     auth::clear();
     push(&app, &st, |s| { s.logged_in = false; s.email.clear(); s.share = None; s.profile = None; });
@@ -144,6 +148,8 @@ async fn send_to(st: &Shared, url: &str, body: serde_json::Value) -> Result<serd
 #[tauri::command]
 async fn send_test(app: AppHandle, st: State<'_, St>) -> Result<(), String> {
     notify(&app, &st, serde_json::json!({"phase": "pregame", "test": true, "mode": "テスト", "map": "テスト送信"})).await;
+    let ok = st.snap.lock().unwrap().last_notify.as_ref().map(|n| n.ok).unwrap_or(false);
+    if ok { mark_setup(&app); push(&app, &st, |s| s.setup_done = true); }
     Ok(())
 }
 
@@ -222,6 +228,8 @@ async fn auto_update(app: AppHandle, st: St) {
 // 試合中に再起動しても Embed を追えるよう、メッセージ ID と表示内容を保存する
 #[derive(Serialize, serde::Deserialize, Default, Clone)]
 struct Saved { msg: String, phase: String, view: View }
+fn setup_path(app: &AppHandle) -> Option<std::path::PathBuf> { app.path().app_data_dir().ok().map(|d| d.join("setup.done")) }
+fn mark_setup(app: &AppHandle) { if let Some(p) = setup_path(app) { if let Some(d) = p.parent() { let _ = std::fs::create_dir_all(d); } let _ = std::fs::write(p, b"1"); } }
 fn saved_path(app: &AppHandle) -> Option<std::path::PathBuf> { app.path().app_data_dir().ok().map(|d| d.join("match.json")) }
 fn save_state(app: &AppHandle, msg: &str, phase: &str, v: &View) {
     let Some(f) = saved_path(app) else { return };
@@ -409,7 +417,7 @@ pub fn run() {
         .plugin(tauri_plugin_opener::init())
         .plugin(tauri_plugin_autostart::init(tauri_plugin_autostart::MacosLauncher::LaunchAgent, Some(vec!["--hidden"])))
         .manage(st.clone())
-        .invoke_handler(tauri::generate_handler![get_state, get_autostart, set_autostart, login, cancel_login, logout, send_test, update_now, share_op])
+        .invoke_handler(tauri::generate_handler![get_state, get_autostart, set_autostart, login, cancel_login, refresh_profile, logout, send_test, update_now, share_op])
         .on_window_event(|w, e| {
             // ×ボタンはトレイへ隠すだけにする
             if let tauri::WindowEvent::CloseRequested { api, .. } = e {
@@ -418,6 +426,7 @@ pub fn run() {
             }
         })
         .setup(move |app| {
+            { let done = setup_path(app.handle()).map(|p| p.exists()).unwrap_or(false); let st3 = app.state::<St>(); if done || st3.snap.lock().unwrap().logged_in { push(app.handle(), &st3, |s| s.setup_done = true); } }
             let open = MenuItem::with_id(app, "open", "開く", true, None::<&str>)?;
             let quit = MenuItem::with_id(app, "quit", "終了", true, None::<&str>)?;
             let upd = MenuItem::with_id(app, "update", "アップデートを確認", true, None::<&str>)?;

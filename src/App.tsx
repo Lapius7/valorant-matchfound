@@ -22,6 +22,7 @@ type Snap = {
   share: string | null;
   profile: Profile | null;
   botMissing: boolean;
+  setupDone: boolean;
   update: { state: "checking" | "none" | "available" | "downloading" | "error"; version: string; message: string } | null;
 };
 
@@ -33,6 +34,82 @@ const PHASE: Record<Snap["riot"], { label: string; hint: string; live: boolean }
   pregame: { label: "マッチ成立", hint: "エージェント選択に進んでください", live: true },
   ingame: { label: "試合中", hint: "", live: true },
 };
+
+const SETUP_URL = "https://lapbot.lapius7.com/application/valorant-matchfound/setup";
+const BOT_URL = "https://discord.com/oauth2/authorize?client_id=1470053949263577189&integration_type=1&scope=applications.commands";
+
+function BotHelp({ n }: { n: Snap["lastNotify"] }) {
+  if (!n || n.ok) return null;
+  const closed = n.message.startsWith("DM を受け取れない");
+  return (
+    <div role="alert" className="flex flex-col gap-3 rounded-xl bg-secondary p-4 text-sm leading-5">
+      <p className="flex items-start gap-2">
+        <TriangleAlert className="mt-0.5 size-4 flex-none text-[#d99a7c]" aria-hidden />
+        <span>{closed ? "DM を送れませんでした。Lapbot をあなたのアカウントにユーザーインストールしましたか？ まだなら、下のボタンから追加してください。" : n.message}</span>
+      </p>
+      {closed && (
+        <div className="flex gap-2">
+          <Button className="h-10 flex-1" onClick={() => openUrl(BOT_URL)}>Lapbot を追加</Button>
+          <Button variant="outline" className="h-10" onClick={() => openUrl(SETUP_URL)}>手順を見る</Button>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function Setup({ s, busy, run }: { s: Snap; busy: boolean; run: (c: string) => Promise<void> }) {
+  const needDiscord = s.loggedIn && !!s.profile && !s.profile.discordId;
+  const step = !s.loggedIn ? 1 : needDiscord ? 2 : 3;
+  const total = needDiscord || step === 2 ? 3 : 2;
+  const num = !s.loggedIn ? 1 : needDiscord ? 2 : total;
+  return (
+    <section className="rise flex flex-col gap-4 rounded-2xl bg-card p-5 shadow-[0_0_0_1px_var(--border)]">
+      <p className="font-mono text-xs leading-4 tracking-wide text-muted-foreground">セットアップ {num} / {total}</p>
+      {step === 1 && (
+        <>
+          <p className="text-lg leading-7 font-medium">Lapount でログイン</p>
+          {s.loginCode ? (
+            <div className="flex flex-col gap-3">
+              <p className="font-mono text-[28px] leading-9 font-medium tracking-[0.12em] select-text">{s.loginCode}</p>
+              <p className="flex items-center gap-2 text-muted-foreground"><Loader2 className="size-4 flex-none animate-spin" />ブラウザで承認してください</p>
+              <div className="flex gap-2">
+                <Button className="h-10 flex-1" disabled={busy} onClick={() => run("login")}>やり直す</Button>
+                <Button variant="outline" className="h-10" onClick={() => invoke("cancel_login")}>キャンセル</Button>
+              </div>
+            </div>
+          ) : (
+            <>
+              <p className="text-muted-foreground">DM の送り先を確かめるため、Lapount アカウントでログインします。</p>
+              <Button className="h-10" disabled={busy} onClick={() => run("login")}>Lapount でログイン</Button>
+            </>
+          )}
+          {s.loginError && <p className="text-destructive">{s.loginError}</p>}
+        </>
+      )}
+      {step === 2 && (
+        <>
+          <p className="text-lg leading-7 font-medium">Discord を連携</p>
+          <p className="text-muted-foreground">Lapount に Discord アカウントが連携されていません。連携してから「確認」を押してください。</p>
+          <div className="flex gap-2">
+            <Button className="h-10 flex-1" onClick={() => openUrl("https://account.lapius7.com/dashboard")}>Lapount で連携する</Button>
+            <Button variant="outline" className="h-10" disabled={busy} onClick={() => run("refresh_profile")}>確認</Button>
+          </div>
+        </>
+      )}
+      {step === 3 && (
+        <>
+          <p className="text-lg leading-7 font-medium">テスト送信</p>
+          <p className="text-muted-foreground">Lapbot をアカウントに追加したあと、テスト送信で DM が届くか確かめます。届いたらセットアップ完了です。</p>
+          <Button variant="outline" className="h-10" onClick={() => openUrl(SETUP_URL)}>Lapbot の追加方法</Button>
+          <Button className="h-10" disabled={busy} onClick={() => run("send_test")}>
+            {busy ? <Loader2 className="size-4 animate-spin" /> : <Send className="size-4" />}テスト送信
+          </Button>
+          <BotHelp n={s.lastNotify} />
+        </>
+      )}
+    </section>
+  );
+}
 
 const time = (s: number) => new Date(s * 1000).toLocaleTimeString("ja-JP", { hour: "2-digit", minute: "2-digit" });
 const style = (i: number) => ({ "--i": i }) as CSSProperties;
@@ -66,6 +143,7 @@ export default function App() {
         <h1 className="text-[15px] leading-5 font-medium tracking-[-0.01em]">valorant-matchfound</h1>
         <UpdateChip u={s.update} />
       </header>
+      {!s.setupDone ? <Setup s={s} busy={busy} run={run} /> : <>
       <Tabs tab={tab} set={setTab} />
       {tab === "home" && <>
 
@@ -147,6 +225,7 @@ export default function App() {
             {time(s.lastNotify.at)}　{s.lastNotify.message}
           </p>
         )}
+        <BotHelp n={s.lastNotify} />
         </div></div>
         </div>
       </section>
@@ -154,6 +233,7 @@ export default function App() {
         <label htmlFor="auto" className="text-sm leading-5">Windows の起動時に開始</label>
         <Switch id="auto" checked={auto} onCheckedChange={(v) => { setAuto(v); invoke("set_autostart", { on: v }); }} />
       </section>
+      </>}
       </>}
     </main>
   );
