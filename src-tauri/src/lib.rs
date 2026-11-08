@@ -272,11 +272,19 @@ async fn monitor(app: AppHandle, st: St) {
     let mut last_try = 0u64;
     let mut next_board = 0u64;
     let mut board_tries = 0u32;          // 終了後のスコア取得の試行回数
+    let mut id_tried = false;
     let mut away = 0u32;                 // 試合の画面から外れた連続回数(一瞬の取得失敗を終了と見なさないため)
     let mut saved = load_state(&app);    // 前回の起動から引き継ぐ試合
     loop {
         let p = riot::probe(&st.riot_http).await;
         let in_match = matches!(p.phase, riot::Phase::Pregame | riot::Phase::Ingame);
+
+        // 試合 ID が無いまま試合中(再起動で引き継いだ場合など): 試合の ID を 1 回だけ取りに行く
+        if p.phase == riot::Phase::Ingame && msg.is_some() && v.match_id.is_empty() && !id_tried {
+            id_tried = true;
+            if let Some((pu, mid)) = pregame::current_match(&st.riot_http, &st.remote_http, &names).await { v.puuid = pu; v.match_id = mid; log(&app, "match id recovered"); }
+        }
+        if !in_match && msg.is_none() { id_tried = false; }
 
         // 前回の起動で追っていた試合: まだ続いていれば再開、終わっていれば終了/キャンセルを反映
         if let Some(sv) = saved.clone() {

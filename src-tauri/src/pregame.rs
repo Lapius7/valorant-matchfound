@@ -118,7 +118,7 @@ fn queue_of(m: &Value) -> String {
 
 pub enum Res { Ok(Value), Retry, Stop }
 
-struct Creds { tok: String, ent: String, puuid: String, pd: String }
+struct Creds { tok: String, ent: String, puuid: String, pd: String, glz: String }
 async fn creds(local: &reqwest::Client) -> Option<Creds> {
     let (port, pw) = crate::riot::lockfile()?;
     let l = |p: &str| local.get(format!("https://127.0.0.1:{port}{p}")).basic_auth("riot", Some(&pw)).send();
@@ -132,7 +132,7 @@ async fn creds(local: &reqwest::Client) -> Option<Creds> {
     }
     if region.is_empty() { return None; }
     let shard = match region.as_str() { "latam" | "br" => "na", r => r };
-    Some(Creds { tok: ent["accessToken"].as_str()?.into(), ent: ent["token"].as_str()?.into(), puuid: ent["subject"].as_str()?.into(), pd: format!("https://pd.{shard}.a.pvp.net") })
+    Some(Creds { tok: ent["accessToken"].as_str()?.into(), ent: ent["token"].as_str()?.into(), puuid: ent["subject"].as_str()?.into(), pd: format!("https://pd.{shard}.a.pvp.net"), glz: format!("https://glz-{region}-1.{shard}.a.pvp.net") })
 }
 
 // 試合終了後のスコアボード(match-details)。1 試合につき呼ぶのは数回まで。429(取りすぎ)なら Stop を返し、呼び出し側は諦める
@@ -200,4 +200,15 @@ pub async fn rank_update(local: &reqwest::Client, remote: &reqwest::Client, name
         "name": tn("TierAfterUpdate"), "before": tn("TierBeforeUpdate"),
         "rr": m["RankedRatingAfterUpdate"].as_i64().unwrap_or(0), "delta": m["RankedRatingEarned"].as_i64().unwrap_or(0),
     }))
+}
+
+// 試合中(アプリ再起動などで試合 ID を持っていないとき)に、いまの試合の (puuid, MatchID) を 1 回だけ引く
+pub async fn current_match(local: &reqwest::Client, remote: &reqwest::Client, names: &Names) -> Option<(String, String)> {
+    let c = creds(local).await?;
+    let r = remote.get(format!("{}/core-game/v1/players/{}", c.glz, c.puuid)).bearer_auth(&c.tok)
+        .header("X-Riot-Entitlements-JWT", &c.ent).header("X-Riot-ClientPlatform", PLATFORM)
+        .header("X-Riot-ClientVersion", names.version.as_str()).send().await.ok()?;
+    if !r.status().is_success() { return None; }
+    let v: Value = r.json().await.ok()?;
+    Some((c.puuid, v["MatchID"].as_str()?.to_string()))
 }

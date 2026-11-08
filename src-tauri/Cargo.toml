@@ -1,6 +1,6 @@
 [package]
 name = "valorant-matchfound"
-version = "0.0.8"
+version = "0.0.9"
 description = "VALORANT のマッチ成立を Discord の DM で知らせる常駐ソフト"
 authors = ["Lapius7"]
 edition = "2024"

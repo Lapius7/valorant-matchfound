@@ -202,6 +202,7 @@ export default function App() {
           <span>Discord が未連携のため DM は届きません。アカウントタブで確認してください。</span>
         </button>
       )}
+      {s.loggedIn && <Button variant="outline" className="h-10 flex-none" onClick={() => openUrl("https://lapbot.lapius7.com/application/valorant-matchfound/history")}>対戦履歴を見る</Button>}
       {s.loggedIn ? <ShareCard url={s.share} compact={compact} /> : (
         <button type="button" onClick={() => setTab("account")} className="rise flex h-12 items-center justify-between rounded-2xl bg-card px-5 text-sm shadow-[0_0_0_1px_var(--border)] transition-[scale] duration-150 active:scale-[0.98]" style={style(2)}>
           <span className="text-muted-foreground">DM を受け取るには Lapount でログイン</span><span>アカウントへ</span>
