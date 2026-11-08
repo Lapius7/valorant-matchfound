@@ -76,6 +76,7 @@ async fn login(app: AppHandle, st: State<'_, St>) -> Result<(), String> {
         let end = auth::now() + d.expires_in;
         while auth::now() < end {
             tokio::time::sleep(std::time::Duration::from_secs(d.interval.max(2))).await;
+            if st.snap.lock().unwrap().login_code.as_deref() != Some(d.user_code.as_str()) { return; }
             match auth::device_poll(&st.http, &d.device_code).await {
                 auth::PollResult::Pending => continue,
                 auth::PollResult::Done(sess) => {
@@ -93,6 +94,11 @@ async fn login(app: AppHandle, st: State<'_, St>) -> Result<(), String> {
         push(&app, &st, |s| { s.login_code = None; s.login_error = Some("コードの有効期限が切れました".into()); });
     });
     Ok(())
+}
+
+#[tauri::command]
+fn cancel_login(app: AppHandle, st: State<'_, St>) {
+    push(&app, &st, |s| { s.login_code = None; s.login_error = None; });
 }
 
 #[tauri::command]
@@ -402,7 +408,7 @@ pub fn run() {
         .plugin(tauri_plugin_opener::init())
         .plugin(tauri_plugin_autostart::init(tauri_plugin_autostart::MacosLauncher::LaunchAgent, Some(vec!["--hidden"])))
         .manage(st.clone())
-        .invoke_handler(tauri::generate_handler![get_state, get_autostart, set_autostart, login, logout, send_test, update_now, share_op])
+        .invoke_handler(tauri::generate_handler![get_state, get_autostart, set_autostart, login, cancel_login, logout, send_test, update_now, share_op])
         .on_window_event(|w, e| {
             // ×ボタンはトレイへ隠すだけにする
             if let tauri::WindowEvent::CloseRequested { api, .. } = e {

@@ -123,6 +123,10 @@ export default function App() {
             <p className="flex items-center gap-2 text-muted-foreground">
               <Loader2 className="size-4 flex-none animate-spin" />ブラウザで承認してください
             </p>
+            <div className="flex gap-2">
+              <Button className="h-10 flex-1" disabled={busy} onClick={() => run("login")}>やり直す</Button>
+              <Button variant="outline" className="h-10" onClick={() => invoke("cancel_login")}>キャンセル</Button>
+            </div>
           </div>
         ) : (
           <>
