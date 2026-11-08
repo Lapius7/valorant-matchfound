@@ -1,5 +1,5 @@
 #ifndef AppVersion
-  #define AppVersion "0.0.7"
+  #define AppVersion "0.0.8"
 #endif
 #define AppName "valorant-matchfound"
 

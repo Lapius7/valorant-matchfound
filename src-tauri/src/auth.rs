@@ -63,7 +63,7 @@ pub async fn device_create(c: &reqwest::Client) -> Result<Device, String> {
     let k = anon();
     c.post(format!("{SUPABASE_URL}/functions/v1/oauth-device-code"))
         .header("apikey", &k).bearer_auth(&k)
-        .json(&serde_json::json!({"action":"create"}))
+        .json(&serde_json::json!({"action":"create","client_id":"lp_matchfound"}))
         .send().await.map_err(|e| e.to_string())?
         .json::<Device>().await.map_err(|e| e.to_string())
 }

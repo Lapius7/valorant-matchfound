@@ -122,6 +122,14 @@ async fn notify(app: &AppHandle, st: &Shared, body: serde_json::Value) -> Option
     id
 }
 
+// サーバーのキャッシュを引く(GET)。見つからなければ Err
+async fn get_json(st: &Shared, url: &str) -> Result<serde_json::Value, String> {
+    let sess = auth::fresh(&st.http, false).await?;
+    let r = st.http.get(url).bearer_auth(&sess.access).send().await.map_err(|_| "接続できません".to_string())?;
+    if r.status().as_u16() != 200 { return Err("not found".into()); }
+    r.json().await.map_err(|_| "bad json".into())
+}
+
 async fn send(st: &Shared, body: serde_json::Value) -> Result<serde_json::Value, String> {
     send_to(st, config::NOTIFY_URL, body).await
 }
@@ -262,6 +270,8 @@ async fn monitor(app: AppHandle, st: St) {
     let mut sent_key = String::new();    // 最後に Discord へ反映できた内容
     let mut failed = false;
     let mut last_try = 0u64;
+    let mut next_board = 0u64;
+    let mut board_tries = 0u32;          // 終了後のスコア取得の試行回数
     let mut away = 0u32;                 // 試合の画面から外れた連続回数(一瞬の取得失敗を終了と見なさないため)
     let mut saved = load_state(&app);    // 前回の起動から引き継ぐ試合
     loop {
@@ -304,6 +314,13 @@ async fn monitor(app: AppHandle, st: St) {
                 if !in_match { s.match_info = None; }
                 else if p.phase == riot::Phase::Ingame { if let Some(m) = s.match_info.as_mut() { m["endsAt"] = 0.into(); } }
             });
+            // 待機開始の通知(既定はオフ。app_data_dir に queue_notify というファイルがあるときだけ送る。VALORANT への追加の問い合わせはしない)
+            if p.phase == riot::Phase::Queue && prev == riot::Phase::Menus && !first && msg.is_none()
+                && app.path().app_data_dir().map(|d| d.join("queue_notify").exists()).unwrap_or(false) {
+                let mut q = View::default();
+                q.mode = pregame::mode_name(&p.mode);
+                let _ = notify(&app, &st, q.body("queue", &shown)).await;
+            }
             prev = p.phase.clone();
         }
 
@@ -323,20 +340,49 @@ async fn monitor(app: AppHandle, st: St) {
                 if !m.is_empty() { v.mode = m; }
                 if v.ends_at == 0 { v.ends_at = info.ends_at; }
                 v.agent_img = info.agent_img;
+                if !info.match_id.is_empty() { v.match_id = info.match_id; v.puuid = info.puuid; }
                 shown = info.players;
                 push(&app, &st, |s| s.match_info = Some(serde_json::json!({"mode": v.mode, "map": v.map, "endsAt": v.ends_at, "mapImg": v.map_img, "players": shown})));
             }
         }
 
+        // 終了したら、スコアボード(とコンペなら RR)が揃うまで送るのを待つ。Riot への問い合わせは控えめにする:
+        //  - まずサーバーのキャッシュを見る(同じ試合を誰かが保存していれば Riot へ行かない)
+        //  - Riot へは 4 秒おきに最大 6 回。429 が返ったら即やめる
+        if msg.is_some() && want == "ended" && !v.match_id.is_empty() && board_tries < 6 && auth::now() >= next_board {
+            if v.board.is_none() {
+                board_tries += 1; next_board = auth::now() + 4;
+                let url = format!("{}/{}?puuid={}", config::MATCH_URL, v.match_id, v.puuid);
+                if let Ok(c) = get_json(&st, &url).await {
+                    if c["board"].is_object() { v.board = Some(c["board"].clone()); log(&app, "scoreboard from cache"); }
+                }
+                if v.board.is_none() {
+                    match pregame::result(&st.riot_http, &st.remote_http, &names, &v.match_id).await {
+                        pregame::Res::Ok(b) => { v.board = Some(b); log(&app, "scoreboard fetched"); }
+                        pregame::Res::Stop => { board_tries = 99; log(&app, "riot rate limited, skip scoreboard"); }
+                        pregame::Res::Retry => {}
+                    }
+                }
+            } else if v.mode == "コンペティティブ" && v.rank.is_none() {
+                board_tries += 1; next_board = auth::now() + 5;
+                match pregame::rank_update(&st.riot_http, &st.remote_http, &names, &v.match_id).await {
+                    pregame::Res::Ok(r) => { v.rank = Some(r); }
+                    pregame::Res::Stop => { board_tries = 99; }
+                    pregame::Res::Retry => {}
+                }
+            }
+        }
+        let waiting_board = want == "ended" && !v.match_id.is_empty() && board_tries < 6 && (v.board.is_none() || (v.mode == "コンペティティブ" && v.rank.is_none()));
+
         // Discord 側が最新でなければ編集する。失敗中は 6 秒以上あけて再試行する
         if let Some(id) = msg.clone() {
             let key = key_of(&want, &shown, &v);
-            if key != sent_key && (!failed || auth::now() >= last_try + 6) {
+            if key != sent_key && !waiting_board && (!failed || auth::now() >= last_try + 6) {
                 last_try = auth::now();
                 match notify(&app, &st, v.upd(&id, &want, &shown)).await {
                     Some(new_id) => {
                         failed = false; sent_key = key;
-                        if matches!(want.as_str(), "ended" | "cancelled") { msg = None; clear_state(&app); }
+                        if matches!(want.as_str(), "ended" | "cancelled") { msg = None; board_tries = 0; next_board = 0; clear_state(&app); }
                         else { save_state(&app, &new_id, &want, &v); msg = Some(new_id); }
                     }
                     None => { failed = true; log(&app, "update failed, will retry"); }
@@ -365,10 +411,11 @@ fn key_of(phase: &str, players: &[pregame::Player], v: &View) -> String {
 }
 
 #[derive(Default, Clone, Serialize, serde::Deserialize)]
-struct View { ends_at: u64, mode: String, map: String, map_img: String, agent_img: String }
+#[serde(default)]
+struct View { ends_at: u64, mode: String, map: String, map_img: String, agent_img: String, match_id: String, puuid: String, board: Option<serde_json::Value>, rank: Option<serde_json::Value> }
 impl View {
     fn body(&self, phase: &str, players: &[pregame::Player]) -> serde_json::Value {
-        serde_json::json!({"phase": phase, "mode": self.mode, "map": self.map, "mapImage": self.map_img, "agentImage": self.agent_img, "endsAt": self.ends_at, "players": players})
+        serde_json::json!({"phase": phase, "mode": self.mode, "map": self.map, "mapImage": self.map_img, "agentImage": self.agent_img, "endsAt": self.ends_at, "players": players, "board": self.board, "matchId": self.match_id, "rank": self.rank})
     }
     fn upd(&self, id: &str, phase: &str, players: &[pregame::Player]) -> serde_json::Value {
         let mut b = self.body(phase, players);
