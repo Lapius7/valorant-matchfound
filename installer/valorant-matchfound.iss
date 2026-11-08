@@ -1,5 +1,5 @@
 #ifndef AppVersion
-  #define AppVersion "0.0.3"
+  #define AppVersion "0.0.4"
 #endif
 #define AppName "valorant-matchfound"
 
@@ -36,10 +36,16 @@ Name: "{autoprograms}\{#AppName}"; Filename: "{app}\{#AppName}.exe"
 [Run]
 ; 通常のインストール: 完了画面のチェックから起動
 Filename: "{app}\{#AppName}.exe"; Description: "{#AppName} を起動する"; Flags: nowait postinstall skipifsilent
-; 自動アップデート(サイレント)の場合は、そのままトレイ常駐で再起動する
-Filename: "{app}\{#AppName}.exe"; Parameters: "--hidden"; Flags: nowait; Check: WizardSilent
 
 [Code]
+// 自動アップデート(サイレント)の場合は、インストール後にトレイ常駐で再起動する
+procedure CurStepChanged(CurStep: TSetupStep);
+var Code: Integer;
+begin
+  if (CurStep = ssPostInstall) and WizardSilent then
+    Exec(ExpandConstant('{app}\{#AppName}.exe'), '--hidden', ExpandConstant('{app}'), SW_SHOW, ewNoWait, Code);
+end;
+
 // 起動中のアプリがあれば、確認なしで閉じてからインストールする(トレイ常駐で閉じにくいため)
 function InitializeSetup(): Boolean;
 var Code: Integer;

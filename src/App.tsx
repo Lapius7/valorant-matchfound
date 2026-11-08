@@ -165,7 +165,7 @@ export default function App() {
   return (
     <main className="flex h-screen flex-col gap-3 p-4">
       <header className="rise flex h-8 items-center justify-between" style={style(0)}>
-        <h1 className="text-[15px] leading-5 font-medium tracking-[-0.01em]">valorant-matchfound</h1>
+        <h1 className="text-[15px] leading-5 font-medium tracking-[-0.01em]">VALORANT Matchfound</h1>
         <UpdateChip u={s.update} />
       </header>
       {!s.setupDone ? <Setup s={s} busy={busy} run={run} /> : <>
@@ -237,7 +237,17 @@ export default function App() {
         <label htmlFor="auto" className="text-sm leading-5">Windows の起動時に開始</label>
         <Switch id="auto" checked={auto} onCheckedChange={(v) => { setAuto(v); invoke("set_autostart", { on: v }); }} />
       </section>
-      <p className="rise px-1 font-mono text-xs leading-4 text-muted-foreground" style={style(3)}>v{__APP_VERSION__}</p>
+      <section className="rise grid gap-1 rounded-2xl bg-card p-5 text-xs leading-5 text-muted-foreground shadow-[0_0_0_1px_var(--border)]" style={style(3)}>
+          <p className="text-sm leading-5 font-medium text-foreground">お問い合わせ</p>
+          <p>Discord: <span className="font-mono text-foreground select-text">x_lapius.xyz</span> の DM</p>
+          <p>X: <button type="button" className="text-foreground underline underline-offset-4" onClick={() => openUrl("https://x.com/Lapius7")}>@Lapius7</button> の DM</p>
+          <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1">
+            <button type="button" className="underline underline-offset-4 hover:text-foreground" onClick={() => openUrl("https://lapbot.lapius7.com/application/valorant-matchfound")}>公式ページ</button>
+            <button type="button" className="underline underline-offset-4 hover:text-foreground" onClick={() => openUrl(SETUP_URL)}>ドキュメント</button>
+            <button type="button" className="underline underline-offset-4 hover:text-foreground" onClick={() => openUrl("https://github.com/Lapius7/valorant-matchfound")}>GitHub</button>
+          </div>
+          <p className="mt-2 font-mono">v{__APP_VERSION__}</p>
+        </section>
       </>}
       </>}
     </main>
@@ -246,6 +256,7 @@ export default function App() {
 
 // 右上のバージョン表示。押すと更新を確認し、新しい版があればそのまま入れる
 function UpdateChip({ u }: { u: Snap["update"] }) {
+  const [ask, setAsk] = useState(false);
   const busy = u?.state === "checking" || u?.state === "downloading";
   const label =
     u?.state === "checking" ? "確認中" :
@@ -255,11 +266,12 @@ function UpdateChip({ u }: { u: Snap["update"] }) {
     u?.state === "error" ? u.message : "更新を確認";
   const Icon = busy ? Loader2 : u?.state === "available" ? ArrowUpCircle : u?.state === "none" ? Check : RefreshCw;
   return (
+    <>
     <button
       type="button"
       disabled={busy}
       title={u?.message || undefined}
-      onClick={() => invoke("update_now")}
+      onClick={() => setAsk(true)}
       className={cn(
         "group relative flex h-8 max-w-[260px] items-center gap-1.5 rounded-full px-3 font-mono text-xs leading-4 transition-[background-color,color,scale] duration-150 active:scale-[0.96] before:absolute before:-inset-1 before:content-['']",
         u?.state === "error" ? "text-destructive" : u?.state === "available" ? "bg-signal/15 text-signal" : "text-muted-foreground hover:bg-card hover:text-foreground",
@@ -268,6 +280,19 @@ function UpdateChip({ u }: { u: Snap["update"] }) {
       <Icon className={cn("size-3.5 flex-none", busy && "animate-spin")} />
       <span className="truncate">{u ? label : `v${__APP_VERSION__}`}</span>
     </button>
+      {ask && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-6" onClick={() => setAsk(false)}>
+          <div role="alertdialog" aria-modal="true" className="w-full max-w-[300px] rounded-2xl bg-card p-5 shadow-[0_0_0_1px_var(--border)]" onClick={(e) => e.stopPropagation()}>
+            <p className="text-sm leading-6 font-medium">アップデートしますか？</p>
+            <p className="mt-1 text-xs leading-5 text-muted-foreground">新しい版があれば更新し、アプリを再起動します。</p>
+            <div className="mt-4 flex justify-end gap-2">
+              <Button variant="ghost" size="sm" onClick={() => setAsk(false)}>キャンセル</Button>
+              <Button size="sm" onClick={() => { setAsk(false); invoke("update_now"); }}>更新して再起動</Button>
+            </div>
+          </div>
+        </div>
+      )}
+    </>
   );
 }
 
