@@ -1,0 +1,124 @@
+{
+  "app": {
+    "title": "VALORANT Matchfound",
+    "setupProgress": "セットアップ {num} / {total}"
+  },
+  "phase": {
+    "closed": { "label": "VALORANT が起動していません", "hint": "起動すると自動で見張りを始めます" },
+    "starting": { "label": "接続しています", "hint": "VALORANT の起動が終わるまでお待ちください" },
+    "menus": { "label": "待機中", "hint": "マッチングを始めると、成立時に DM でお知らせします" },
+    "queue": { "label": "マッチング中", "hint": "成立するまでこのまま待てます" },
+    "pregame": { "label": "マッチ成立", "hint": "エージェント選択に進んでください" },
+    "ingame": { "label": "試合中", "hint": "" }
+  },
+  "bot": {
+    "dmFailed": "DM を送れませんでした。Lapbot をあなたのアカウントにユーザーインストールしましたか？ まだなら、下のボタンから追加してください。",
+    "addLapbot": "Lapbot を追加",
+    "seeSteps": "手順を見る"
+  },
+  "login": {
+    "title": "Lapount でログイン",
+    "approveInBrowser": "ブラウザで承認してください",
+    "redo": "やり直す",
+    "cancel": "キャンセル",
+    "desc": "ログインすると、連携済みの Discord に DM が届きます。",
+    "button": "Lapount でログイン",
+    "requireDm": "DM を受け取るには Lapount でログイン",
+    "goAccount": "アカウントへ"
+  },
+  "setup": {
+    "title": "Lapount でログイン",
+    "desc": "DM の送り先を確かめるため、Lapount アカウントでログインします。",
+    "loginButton": "Lapount でログイン",
+    "discordTitle": "Discord を連携",
+    "discordDesc": "Lapount に Discord アカウントが連携されていません。連携してから「確認」を押してください。",
+    "linkDiscord": "Lapount で連携する",
+    "confirm": "確認",
+    "testTitle": "テスト送信",
+    "testDesc": "Lapbot をアカウントに追加したあと、テスト送信で DM が届くか確かめます。届いたらセットアップ完了です。",
+    "testMethod": "Lapbot の追加方法",
+    "testButton": "テスト送信"
+  },
+  "update": {
+    "checking": "確認中",
+    "downloading": "v{version} をダウンロード中",
+    "available": "v{version} あり",
+    "none": "最新版です",
+    "error": "{message}",
+    "check": "更新を確認",
+    "dialogTitle": "アップデートしますか？",
+    "dialogDesc": "v{version} に更新し、アプリを再起動します。",
+    "cancel": "キャンセル",
+    "update": "更新して再起動"
+  },
+  "share": {
+    "title": "観戦URL",
+    "public": "公開中",
+    "copied": "コピーしました",
+    "copy": "コピー",
+    "reissue": "再発行",
+    "issue": "URLを発行",
+    "warning": "URL を知っている人は誰でも、マッチ中のプレイヤー名を見られます。検索には出ません。"
+  },
+  "tabs": {
+    "home": "ホーム",
+    "account": "アカウント",
+    "settings": "設定"
+  },
+  "account": {
+    "loginLabel": "Lapount ログイン中",
+    "row": {
+      "discordName": "Discord 名",
+      "discordUser": "Discord ユーザー名",
+      "discordId": "Discord ID",
+      "discordEmail": "Discord メール",
+      "lapountEmail": "Lapount メール",
+      "lapountId": "Lapount ID",
+      "registered": "登録日",
+      "lastSignIn": "最終ログイン"
+    },
+    "noDiscord": {
+      "title": "Lapount に Discord が連携されていません。連携すると、マッチ成立の DM が届きます。",
+      "button": "Lapount で Discord を連携する",
+      "note": "連携したあと、アプリを開き直すと反映されます。"
+    },
+    "botMissing": "Lapbot がアカウントに追加されていないため、DM が届きません。",
+    "botAdd": "DM を受け取るには、Lapbot をアカウントに追加してください。",
+    "howToAdd": "追加方法を見る",
+    "logout": "ログアウト"
+  },
+  "settings": {
+    "notificationsTitle": "Discord への通知",
+    "notificationsDesc": "マッチ成立の DM が届くか確かめます。",
+    "testButton": "テスト送信",
+    "addLapbot": "Lapbot を追加",
+    "addMethod": "追加方法",
+    "autostart": "Windows の起動時に開始",
+    "bootShow": "起動時に画面を表示",
+    "queueNotify": "待機開始も DM で通知",
+    "lang": "言語",
+    "matchHistory": "対戦履歴を見る",
+    "contact": "お問い合わせ",
+    "contactDiscordLabel": "Discord: ",
+    "contactDiscordSuffix": " の DM",
+    "contactXSuffix": " の DM",
+    "officialPage": "公式ページ",
+    "docs": "ドキュメント",
+    "github": "GitHub",
+    "version": "v{version}"
+  },
+  "party": {
+    "party": "パーティー（{count}/5）",
+    "you": "あなた"
+  },
+  "match": {
+    "map": "マップ",
+    "agentWaiting": "選択待ち",
+    "locked": "ロック",
+    "selecting": "選択中",
+    "waiting": "待機",
+    "seconds": "秒",
+    "ariaLeft": "残り {left} 秒",
+    "delete": "削除"
+  }
+}

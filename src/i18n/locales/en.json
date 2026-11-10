@@ -1,0 +1,124 @@
+{
+  "app": {
+    "title": "VALORANT Matchfound",
+    "setupProgress": "Setup {num} / {total}"
+  },
+  "phase": {
+    "closed": { "label": "VALORANT is not running", "hint": "Watching starts automatically when you launch it" },
+    "starting": { "label": "Connecting", "hint": "Please wait until VALORANT finishes launching" },
+    "menus": { "label": "Waiting", "hint": "We'll DM you when a match is found once you start matchmaking" },
+    "queue": { "label": "Matchmaking", "hint": "You can wait here until it's found" },
+    "pregame": { "label": "Match found", "hint": "Proceed to agent select" },
+    "ingame": { "label": "In game", "hint": "" }
+  },
+  "bot": {
+    "dmFailed": "Failed to send DM. Have you user-installed Lapbot to your account? If not, add it from the button below.",
+    "addLapbot": "Add Lapbot",
+    "seeSteps": "See steps"
+  },
+  "login": {
+    "title": "Log in with Lapount",
+    "approveInBrowser": "Approve in your browser",
+    "redo": "Redo",
+    "cancel": "Cancel",
+    "desc": "Logging in sends DMs to your linked Discord.",
+    "button": "Log in with Lapount",
+    "requireDm": "Log in with Lapount to receive DMs",
+    "goAccount": "Go to account"
+  },
+  "setup": {
+    "title": "Log in with Lapount",
+    "desc": "Log in with your Lapount account to confirm where to send DMs.",
+    "loginButton": "Log in with Lapount",
+    "discordTitle": "Link Discord",
+    "discordDesc": "No Discord account is linked to Lapount. Link it, then press Confirm.",
+    "linkDiscord": "Link via Lapount",
+    "confirm": "Confirm",
+    "testTitle": "Test DM",
+    "testDesc": "After adding Lapbot to your account, send a test DM to make sure it arrives. Once it does, setup is complete.",
+    "testMethod": "How to add Lapbot",
+    "testButton": "Send test DM"
+  },
+  "update": {
+    "checking": "Checking",
+    "downloading": "Downloading v{version}",
+    "available": "v{version} available",
+    "none": "Up to date",
+    "error": "{message}",
+    "check": "Check for updates",
+    "dialogTitle": "Update now?",
+    "dialogDesc": "Update to v{version} and restart the app.",
+    "cancel": "Cancel",
+    "update": "Update and restart"
+  },
+  "share": {
+    "title": "Watch URL",
+    "public": "Public",
+    "copied": "Copied",
+    "copy": "Copy",
+    "reissue": "Reissue",
+    "issue": "Issue URL",
+    "warning": "Anyone with the URL can see the player names in your current match. It won't appear in search."
+  },
+  "tabs": {
+    "home": "Home",
+    "account": "Account",
+    "settings": "Settings"
+  },
+  "account": {
+    "loginLabel": "Logged in to Lapount",
+    "row": {
+      "discordName": "Discord Name",
+      "discordUser": "Discord Username",
+      "discordId": "Discord ID",
+      "discordEmail": "Discord Email",
+      "lapountEmail": "Lapount Email",
+      "lapountId": "Lapount ID",
+      "registered": "Registered",
+      "lastSignIn": "Last sign in"
+    },
+    "noDiscord": {
+      "title": "No Discord is linked to Lapount. Linking it sends DMs when a match is found.",
+      "button": "Link Discord via Lapount",
+      "note": "Changes take effect after you reopen the app."
+    },
+    "botMissing": "Lapbot hasn't been added to your account, so DMs won't arrive.",
+    "botAdd": "To receive DMs, add Lapbot to your account.",
+    "howToAdd": "See how to add",
+    "logout": "Log out"
+  },
+  "settings": {
+    "notificationsTitle": "Discord notifications",
+    "notificationsDesc": "Check that match-found DMs arrive.",
+    "testButton": "Send test DM",
+    "addLapbot": "Add Lapbot",
+    "addMethod": "How to add",
+    "autostart": "Start when Windows starts",
+    "bootShow": "Show window on startup",
+    "queueNotify": "Also notify by DM when waiting starts",
+    "lang": "Language",
+    "matchHistory": "Match history",
+    "contact": "Contact",
+    "contactDiscordLabel": "Discord: ",
+    "contactDiscordSuffix": " DM",
+    "contactXSuffix": " DM",
+    "officialPage": "Official page",
+    "docs": "Docs",
+    "github": "GitHub",
+    "version": "v{version}"
+  },
+  "party": {
+    "party": "Party ({count}/5)",
+    "you": "You"
+  },
+  "match": {
+    "map": "Map",
+    "agentWaiting": "Waiting to pick",
+    "locked": "Locked",
+    "selecting": "Selecting",
+    "waiting": "Waiting",
+    "seconds": "sec",
+    "ariaLeft": "{left}s left",
+    "delete": "Delete"
+  }
+}
