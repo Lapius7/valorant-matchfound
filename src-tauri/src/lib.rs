@@ -334,7 +334,7 @@ fn clear_state(app: &AppHandle) { if let Some(f) = saved_path(app) { let _ = std
 // 2 秒ごとに VALORANT の状態を見る。マッチ成立(PREGAME)で Embed を送り、選択の変化・試合開始・終了・キャンセルで同じメッセージを編集する。
 // 編集に失敗したら、成功するまで間隔を空けて再送する(Bot の再起動・ネットワーク断への対策)
 async fn monitor(app: AppHandle, st: St) {
-    let names = pregame::load_names(&st.http).await;
+    let mut names = pregame::load_names(&st.http).await;
     if pregame::load_local(&st.http, i18n::lang()).await { push(&app, &st, |_| {}); }
     if auth::load().is_some() { let _ = share_call(&app, &st, "status").await; load_profile(&app, &st).await; }
     let mut prev = riot::Phase::Closed;
@@ -390,6 +390,9 @@ async fn monitor(app: AppHandle, st: St) {
         }
 
         if p.phase != prev {
+            // 起動時に名前を取りきれなかったときは、状態が変わるたびに取り直す
+            if !names.complete() { names = pregame::load_names(&st.http).await; }
+            if pregame::load_local(&st.http, i18n::lang()).await { push(&app, &st, |_| {}); }
             log(&app, &format!("{:?} -> {:?} [{}] mode={} map={}", prev, p.phase, p.raw_keys, p.mode, p.map));
             let entered = p.phase == riot::Phase::Pregame && !matches!(prev, riot::Phase::Pregame | riot::Phase::Ingame);
             // 起動時にすでに PREGAME だった場合は通知しない(古い状態の可能性がある)

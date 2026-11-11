@@ -38,28 +38,38 @@ pub async fn load_names(http: &reqwest::Client) -> Names {
     if let Some(v) = get("https://valorant-api.com/v1/version").await {
         n.version = v["data"]["riotClientVersion"].as_str().unwrap_or("").into();
     }
-    let _ = BASE.set(n.clone());
+    // 一部しか取れなかったときは変換元にしない(次の load_names でやり直す)
+    if n.complete() { *BASE.lock().unwrap() = Some(n.clone()); }
     n
 }
 
-// load_names で取った日本語名(画面の言語の変換元)
-static BASE: std::sync::OnceLock<Names> = std::sync::OnceLock::new();
+impl Names {
+    /// エージェント・マップ・階級がすべて取れているか
+    pub fn complete(&self) -> bool { !self.agents.is_empty() && !self.maps.is_empty() && !self.tiers.is_empty() }
+}
+
+// load_names で取った日本語名(画面の言語の変換元)。すべて取れたときだけ入る
+static BASE: std::sync::Mutex<Option<Names>> = std::sync::Mutex::new(None);
 
 // 画面の言語でのエージェント・マップ・階級名を取り、日本語名 → その言語の名前 として持つ。
 // 日本語名がまだ無い、取得済み、日本語のときは何もしない。新しく取れたら true
 pub async fn load_local(http: &reqwest::Client, code: &str) -> bool {
     let Some((code, api)) = crate::i18n::api_lang(code) else { return false };
-    let Some(base) = BASE.get() else { return false };
     if code == "ja" || crate::i18n::has_names(code) { return false; }
+    let Some(base) = BASE.lock().unwrap().clone() else { return false };
     let get = |u: String| async move { http.get(u).send().await.ok()?.json::<Value>().await.ok() };
     let mut m: HashMap<String, String> = HashMap::new();
+    // 3つのうち1つでも取れなければ覚えずに、次の機会にやり直す(一部だけ日本語のまま残らないように)
+    let mut ok = [false; 3];
     if let Some(v) = get(format!("https://valorant-api.com/v1/agents?isPlayableCharacter=true&language={api}")).await {
+        ok[0] = v["data"].as_array().is_some_and(|a| !a.is_empty());
         for a in v["data"].as_array().into_iter().flatten() {
             if let (Some(id), Some(nm)) = (a["uuid"].as_str(), a["displayName"].as_str())
                 && let Some(ja) = base.agents.get(&id.to_lowercase()) { m.insert(ja.clone(), nm.into()); }
         }
     }
     if let Some(v) = get(format!("https://valorant-api.com/v1/maps?language={api}")).await {
+        ok[1] = v["data"].as_array().is_some_and(|a| !a.is_empty());
         for x in v["data"].as_array().into_iter().flatten() {
             if let (Some(u), Some(nm)) = (x["mapUrl"].as_str(), x["displayName"].as_str())
                 && let Some((ja, _)) = base.maps.get(u) { m.insert(ja.clone(), nm.into()); }
@@ -67,12 +77,13 @@ pub async fn load_local(http: &reqwest::Client, code: &str) -> bool {
     }
     if let Some(v) = get(format!("https://valorant-api.com/v1/competitivetiers?language={api}")).await
         && let Some(t) = v["data"].as_array().and_then(|a| a.last()) {
+            ok[2] = true;
             for e in t["tiers"].as_array().into_iter().flatten() {
                 if let (Some(tn), Some(nm)) = (e["tier"].as_u64(), e["tierName"].as_str())
                     && let Some(ja) = base.tiers.get(&tn) { m.insert(ja.clone(), nm.into()); }
             }
         }
-    if m.is_empty() { return false; } // 取れなかったら次の機会にやり直す
+    if m.is_empty() || ok.contains(&false) { return false; }
     crate::i18n::set_names(code, m);
     true
 }
