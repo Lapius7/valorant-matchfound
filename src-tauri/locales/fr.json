@@ -1,0 +1,56 @@
+{
+  "tray": {
+    "open": "Ouvrir",
+    "update": "Rechercher des mises à jour",
+    "quit": "Quitter"
+  },
+  "auth": {
+    "denied": "Connexion refusée",
+    "expired": "Le code a expiré",
+    "used": "Ce code a déjà été utilisé",
+    "noToken": "Impossible de recevoir le jeton",
+    "unexpected": "Statut inattendu",
+    "notLoggedIn": "Non connecté",
+    "sessionExpired": "Votre session a expiré. Reconnectez-vous"
+  },
+  "update": {
+    "noServer": "Impossible de joindre le serveur de mise à jour",
+    "checkFailed": "Échec de la recherche de mises à jour",
+    "badInfo": "Impossible de lire les infos de mise à jour",
+    "noInstaller": "Programme d’installation introuvable",
+    "noHash": "Mise à jour impossible : hachage manquant",
+    "badSource": "Source de téléchargement inattendue",
+    "downloadFailed": "Échec du téléchargement",
+    "mismatch": "Le fichier téléchargé ne correspond pas. Mise à jour annulée",
+    "latest": "À jour",
+    "found": "Nouvelle version disponible"
+  },
+  "notify": {
+    "skipped": "Ignoré : un MP vient d’être envoyé",
+    "sent": "MP envoyé sur Discord",
+    "noConnection": "Connexion impossible",
+    "noServer": "Impossible de joindre le serveur",
+    "invalidLogin": "Connexion invalide. Reconnectez-vous",
+    "noDiscord": "Aucun Discord n’est associé à Lapount",
+    "dmClosed": "Les MP sont bloqués. Ajoutez Lapbot à votre compte et autorisez les MP",
+    "failed": "Échec de l’envoi",
+    "invalidAction": "Action invalide"
+  },
+  "mode": {
+    "unrated": "Non classée",
+    "competitive": "Compétition",
+    "swiftplay": "Swiftplay",
+    "spikerush": "Spike Rush",
+    "deathmatch": "Combat à mort",
+    "ggteam": "Escalade",
+    "onefa": "Réplication",
+    "hurm": "Combat à mort en équipe",
+    "premier": "Premier",
+    "snowball": "Bataille de boules de neige",
+    "custom": "Personnalisée",
+    "test": "Test",
+    "testSend": "Envoi de test",
+    "unknown": "Inconnu"
+  },
+  "player": "Joueur {n}"
+}

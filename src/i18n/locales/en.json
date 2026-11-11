@@ -9,7 +9,7 @@
     "menus": { "label": "Waiting", "hint": "We'll DM you when a match is found once you start matchmaking" },
     "queue": { "label": "Matchmaking", "hint": "You can wait here until it's found" },
     "pregame": { "label": "Match found", "hint": "Proceed to agent select" },
-    "ingame": { "label": "In game", "hint": "" }
+    "ingame": { "label": "In game", "hint": "You can leave it running until the match ends" }
   },
   "bot": {
     "dmFailed": "Failed to send DM. Have you user-installed Lapbot to your account? If not, add it from the button below.",
@@ -58,7 +58,8 @@
     "copy": "Copy",
     "reissue": "Reissue",
     "issue": "Issue URL",
-    "warning": "Anyone with the URL can see the player names in your current match. It won't appear in search."
+    "warning": "Anyone with the URL can see the player names in your current match. It won't appear in search.",
+    "delete": "Delete"
   },
   "tabs": {
     "home": "Home",
@@ -118,7 +119,6 @@
     "selecting": "Selecting",
     "waiting": "Waiting",
     "seconds": "sec",
-    "ariaLeft": "{left}s left",
-    "delete": "Delete"
+    "ariaLeft": "{left}s left"
   }
 }

@@ -1,0 +1,56 @@
+{
+  "tray": {
+    "open": "Abrir",
+    "update": "Buscar actualizaciones",
+    "quit": "Salir"
+  },
+  "auth": {
+    "denied": "Inicio de sesión rechazado",
+    "expired": "El código ha caducado",
+    "used": "Este código ya se ha usado",
+    "noToken": "No se pudo recibir el token",
+    "unexpected": "Estado inesperado",
+    "notLoggedIn": "No has iniciado sesión",
+    "sessionExpired": "Tu sesión ha caducado. Vuelve a iniciar sesión"
+  },
+  "update": {
+    "noServer": "No se puede conectar al servidor de actualizaciones",
+    "checkFailed": "Error al buscar actualizaciones",
+    "badInfo": "No se pudo leer la información de la actualización",
+    "noInstaller": "No se encontró el instalador",
+    "noHash": "No se puede actualizar: falta el hash",
+    "badSource": "Origen de descarga inesperado",
+    "downloadFailed": "Error en la descarga",
+    "mismatch": "El archivo descargado no coincide. Actualización cancelada",
+    "latest": "Actualizado",
+    "found": "Hay una versión nueva"
+  },
+  "notify": {
+    "skipped": "Omitido: se acaba de enviar un MD",
+    "sent": "MD enviado por Discord",
+    "noConnection": "No se puede conectar",
+    "noServer": "No se puede conectar al servidor",
+    "invalidLogin": "Sesión no válida. Vuelve a iniciar sesión",
+    "noDiscord": "No hay ningún Discord vinculado a Lapount",
+    "dmClosed": "Los MD están bloqueados. Añade Lapbot a tu cuenta y permite los MD",
+    "failed": "Error al enviar",
+    "invalidAction": "Acción no válida"
+  },
+  "mode": {
+    "unrated": "No competitivo",
+    "competitive": "Competitivo",
+    "swiftplay": "Swiftplay",
+    "spikerush": "Fiebre de la Spike",
+    "deathmatch": "Combate a muerte",
+    "ggteam": "Escalada",
+    "onefa": "Replicación",
+    "hurm": "Combate a muerte por equipos",
+    "premier": "Premier",
+    "snowball": "Guerra de bolas de nieve",
+    "custom": "Personalizada",
+    "test": "Prueba",
+    "testSend": "Envío de prueba",
+    "unknown": "Desconocido"
+  },
+  "player": "Jugador {n}"
+}

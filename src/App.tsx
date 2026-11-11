@@ -8,12 +8,12 @@ import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { cn } from "@/lib/utils";
 import { useI18n } from "@/i18n/useI18n";
-import { getLang, t } from "@/i18n/index";
+import { getLang, LOCALE_NAMES, t, type Locale } from "@/i18n/index";
 
 import { MatchPanel, type MatchInfo } from "@/match";
 
 type Profile = { lapountId: string; lapountEmail: string; createdAt: string; lastSignIn: string; discordName: string; discordUser: string; discordId: string; discordEmail: string; avatar: string };
-type Notify = { at: number; ok: boolean; message: string };
+type Notify = { at: number; ok: boolean; message: string; dmClosed: boolean };
 type Snap = {
   riot: "closed" | "starting" | "menus" | "queue" | "pregame" | "ingame";
   loggedIn: boolean;
@@ -45,7 +45,7 @@ const BOT_URL = "https://discord.com/oauth2/authorize?client_id=1470053949263577
 
 function BotHelp({ n }: { n: Snap["lastNotify"] }) {
   if (!n || n.ok) return null;
-  const closed = n.message.startsWith("DM を受け取れない");
+  const closed = n.dmClosed;
   return (
     <div role="alert" className="flex flex-col gap-3 rounded-xl bg-secondary p-4 text-sm leading-5">
       <p className="flex items-start gap-2">
@@ -140,8 +140,8 @@ function Setup({ s, busy, run }: { s: Snap; busy: boolean; run: (c: string) => P
   );
 }
 
-const time = (s: number) => new Date(s * 1000).toLocaleTimeString(getLang() === "en" ? "en-US" : "ja-JP", { hour: "2-digit", minute: "2-digit" });
-const day = (v: string) => (v ? new Date(v).toLocaleString(getLang() === "en" ? "en-US" : "ja-JP", { dateStyle: "medium", timeStyle: "short" }) : "—");
+const time = (s: number) => new Date(s * 1000).toLocaleTimeString(getLang(), { hour: "2-digit", minute: "2-digit" });
+const day = (v: string) => (v ? new Date(v).toLocaleString(getLang(), { dateStyle: "medium", timeStyle: "short" }) : "—");
 const style = (i: number) => ({ "--i": i }) as CSSProperties;
 
 export default function App() {
@@ -152,6 +152,12 @@ export default function App() {
   const [queueN, setQueueN] = useState(false);
   const [busy, setBusy] = useState(false);
   const [tab, setTab] = useState<Tab>("home");
+
+  // バックエンド(トレイ・エラー文・試合の表示名)と html の lang を画面の言語に合わせる
+  useEffect(() => {
+    document.documentElement.lang = lang;
+    invoke("set_lang", { lang });
+  }, [lang]);
 
   useEffect(() => {
     invoke<Snap>("get_state").then(setS);
@@ -221,7 +227,7 @@ export default function App() {
           <span>{t("account.noDiscord.title")}</span>
         </button>
       )}
-      {s.loggedIn && <Button variant="outline" className="h-10 flex-none" onClick={() => openUrl("https://lapbot.lapius7.com/application/valorant-matchfound/history")}>{t("settings.matchHistory")}</Button>}
+      {s.loggedIn && <Button variant="outline" className="h-10 flex-none" onClick={() => openUrl(`https://lapbot.lapius7.com/application/valorant-matchfound/history?lang=${lang}`)}>{t("settings.matchHistory")}</Button>}
       {s.loggedIn ? <ShareCard url={s.share} compact={compact} /> : (
         <button type="button" onClick={() => setTab("account")} className="rise flex h-12 items-center justify-between rounded-2xl bg-card px-5 text-sm shadow-[0_0_0_1px_var(--border)] transition-[scale] duration-150 active:scale-[0.98]" style={style(2)}>
           <span className="text-muted-foreground">{t("login.requireDm")}</span><span>{t("login.goAccount")}</span>
@@ -245,7 +251,7 @@ export default function App() {
         </Button>
         {s.lastNotify && (
           <p className={cn("text-xs leading-5 tabular-nums", s.lastNotify.ok ? "text-muted-foreground" : "text-destructive")}>
-            {time(s.lastNotify.at)}　{s.lastNotify.message}
+            {time(s.lastNotify.at)}{" "}{s.lastNotify.message}
           </p>
         )}
         <BotHelp n={s.lastNotify} />
@@ -268,9 +274,8 @@ export default function App() {
       </section>
       <section className="rise flex h-14 flex-none items-center justify-between rounded-2xl bg-card px-5 shadow-[0_0_0_1px_var(--border)]" style={style(2)}>
         <label htmlFor="lang" className="text-sm leading-5">{t("settings.lang")}</label>
-        <select id="lang" value={lang} onChange={(e) => setLang(e.target.value as "ja" | "en")} className="text-sm leading-5 rounded-md border border-input bg-background px-2 py-1.5">
-          <option value="ja">日本語</option>
-          <option value="en">English</option>
+        <select id="lang" value={lang} onChange={(e) => setLang(e.target.value as Locale)} className="text-sm leading-5 rounded-md border border-input bg-background px-2 py-1.5">
+          {LOCALE_NAMES.map(([code, name]) => <option key={code} value={code}>{name}</option>)}
         </select>
       </section>
       <section className="rise grid gap-1 rounded-2xl bg-card p-5 text-xs leading-5 text-muted-foreground shadow-[0_0_0_1px_var(--border)]" style={style(3)}>
@@ -282,7 +287,7 @@ export default function App() {
             <button type="button" className="underline underline-offset-4 hover:text-foreground" onClick={() => openUrl(SETUP_URL)}>{t("settings.docs")}</button>
             <button type="button" className="underline underline-offset-4 hover:text-foreground" onClick={() => openUrl("https://github.com/Lapius7/valorant-matchfound")}>{t("settings.github")}</button>
           </div>
-          <p className="mt-2 font-mono">v{__APP_VERSION__}</p>
+          <p className="mt-2 font-mono">{t("settings.version", { version: __APP_VERSION__ })}</p>
         </section>
       </>}
       </>}
@@ -315,7 +320,7 @@ function UpdateChip({ u }: { u: Snap["update"] }) {
       )}
     >
       <Icon className={cn("size-3.5 flex-none", busy && "animate-spin")} />
-      <span className="truncate">{u ? label : `v${__APP_VERSION__}`}</span>
+      <span className="truncate">{u ? label : t("settings.version", { version: __APP_VERSION__ })}</span>
     </button>
       {ask && createPortal(
         <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 p-6" onClick={() => setAsk(false)}>

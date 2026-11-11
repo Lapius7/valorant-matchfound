@@ -1,0 +1,142 @@
+{
+  "app": {
+    "title": "VALORANT Matchfound",
+    "setupProgress": "Einrichtung {num} / {total}"
+  },
+  "phase": {
+    "closed": {
+      "label": "VALORANT läuft nicht",
+      "hint": "Die Überwachung startet automatisch, sobald du es öffnest"
+    },
+    "starting": {
+      "label": "Verbinde",
+      "hint": "Bitte warte, bis VALORANT gestartet ist"
+    },
+    "menus": {
+      "label": "Bereit",
+      "hint": "Starte die Spielersuche – sobald ein Match gefunden ist, bekommst du eine DM"
+    },
+    "queue": {
+      "label": "Spielersuche",
+      "hint": "Du kannst hier warten, bis ein Match gefunden ist"
+    },
+    "pregame": {
+      "label": "Match gefunden",
+      "hint": "Weiter zur Agentenauswahl"
+    },
+    "ingame": {
+      "label": "Im Spiel",
+      "hint": "Du kannst die App bis zum Ende des Matches laufen lassen"
+    }
+  },
+  "bot": {
+    "dmFailed": "DM konnte nicht gesendet werden. Hast du Lapbot als Benutzer-App zu deinem Konto hinzugefügt? Falls nicht, füge ihn über den Button unten hinzu.",
+    "addLapbot": "Lapbot hinzufügen",
+    "seeSteps": "Anleitung"
+  },
+  "login": {
+    "title": "Mit Lapount anmelden",
+    "approveInBrowser": "Bestätige im Browser",
+    "redo": "Erneut",
+    "cancel": "Abbrechen",
+    "desc": "Nach der Anmeldung kommen DMs an dein verknüpftes Discord.",
+    "button": "Mit Lapount anmelden",
+    "requireDm": "Mit Lapount anmelden, um DMs zu erhalten",
+    "goAccount": "Zum Konto"
+  },
+  "setup": {
+    "title": "Mit Lapount anmelden",
+    "desc": "Melde dich mit deinem Lapount-Konto an, damit wir wissen, wohin die DMs gehen.",
+    "loginButton": "Mit Lapount anmelden",
+    "discordTitle": "Discord verknüpfen",
+    "discordDesc": "Mit Lapount ist kein Discord-Konto verknüpft. Verknüpfe es und tippe dann auf „Prüfen“.",
+    "linkDiscord": "In Lapount verknüpfen",
+    "confirm": "Prüfen",
+    "testTitle": "Test-DM",
+    "testDesc": "Füge Lapbot zu deinem Konto hinzu und sende eine Test-DM, um zu prüfen, ob sie ankommt. Sobald sie da ist, ist die Einrichtung fertig.",
+    "testMethod": "Lapbot hinzufügen – so geht’s",
+    "testButton": "Test-DM senden"
+  },
+  "update": {
+    "checking": "Prüfe",
+    "downloading": "Lade v{version}",
+    "available": "v{version} verfügbar",
+    "none": "Aktuell",
+    "error": "{message}",
+    "check": "Nach Updates suchen",
+    "dialogTitle": "Jetzt aktualisieren?",
+    "dialogDesc": "Auf v{version} aktualisieren und die App neu starten.",
+    "cancel": "Abbrechen",
+    "update": "Aktualisieren und neu starten"
+  },
+  "share": {
+    "title": "Zuschauer-URL",
+    "public": "Öffentlich",
+    "copied": "Kopiert",
+    "copy": "Kopieren",
+    "reissue": "Neu erstellen",
+    "issue": "URL erstellen",
+    "warning": "Jeder mit der URL sieht die Spielernamen im aktuellen Match. Sie erscheint nicht in Suchergebnissen.",
+    "delete": "Löschen"
+  },
+  "tabs": {
+    "home": "Start",
+    "account": "Konto",
+    "settings": "Einstellungen"
+  },
+  "account": {
+    "loginLabel": "Bei Lapount angemeldet",
+    "row": {
+      "discordName": "Discord-Name",
+      "discordUser": "Discord-Benutzername",
+      "discordId": "Discord-ID",
+      "discordEmail": "Discord-E-Mail",
+      "lapountEmail": "Lapount-E-Mail",
+      "lapountId": "Lapount-ID",
+      "registered": "Registriert",
+      "lastSignIn": "Letzte Anmeldung"
+    },
+    "noDiscord": {
+      "title": "Mit Lapount ist kein Discord verknüpft. Nach dem Verknüpfen bekommst du DMs, wenn ein Match gefunden wird.",
+      "button": "Discord in Lapount verknüpfen",
+      "note": "Wird nach einem Neustart der App übernommen."
+    },
+    "botMissing": "Lapbot wurde nicht zu deinem Konto hinzugefügt, daher kommen keine DMs an.",
+    "botAdd": "Um DMs zu erhalten, füge Lapbot zu deinem Konto hinzu.",
+    "howToAdd": "So fügst du ihn hinzu",
+    "logout": "Abmelden"
+  },
+  "settings": {
+    "notificationsTitle": "Discord-Benachrichtigungen",
+    "notificationsDesc": "Prüfe, ob DMs bei gefundenem Match ankommen.",
+    "testButton": "Test-DM senden",
+    "addLapbot": "Lapbot hinzufügen",
+    "addMethod": "So geht’s",
+    "autostart": "Mit Windows starten",
+    "bootShow": "Fenster beim Start zeigen",
+    "queueNotify": "Auch beim Start der Suche per DM benachrichtigen",
+    "lang": "Sprache",
+    "matchHistory": "Matchverlauf",
+    "contact": "Kontakt",
+    "contactDiscordLabel": "Discord: ",
+    "contactDiscordSuffix": " (DM)",
+    "contactXSuffix": " (DM)",
+    "officialPage": "Offizielle Seite",
+    "docs": "Doku",
+    "github": "GitHub",
+    "version": "v{version}"
+  },
+  "party": {
+    "party": "Gruppe ({count}/5)",
+    "you": "Du"
+  },
+  "match": {
+    "map": "Karte",
+    "agentWaiting": "Wählt noch",
+    "locked": "Fixiert",
+    "selecting": "Wählt",
+    "waiting": "Wartet",
+    "seconds": "s",
+    "ariaLeft": "Noch {left} s"
+  }
+}

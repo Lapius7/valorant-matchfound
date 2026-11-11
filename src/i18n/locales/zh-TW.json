@@ -1,0 +1,142 @@
+{
+  "app": {
+    "title": "VALORANT Matchfound",
+    "setupProgress": "設定 {num} / {total}"
+  },
+  "phase": {
+    "closed": {
+      "label": "VALORANT 未執行",
+      "hint": "啟動後會自動開始監看"
+    },
+    "starting": {
+      "label": "正在連線",
+      "hint": "請等待 VALORANT 啟動完成"
+    },
+    "menus": {
+      "label": "等待中",
+      "hint": "開始配對後，配對成功時會以私訊通知你"
+    },
+    "queue": {
+      "label": "配對中",
+      "hint": "在此等待配對成功即可"
+    },
+    "pregame": {
+      "label": "已找到對戰",
+      "hint": "請進入特務選擇"
+    },
+    "ingame": {
+      "label": "對戰中",
+      "hint": "對戰結束前保持執行即可"
+    }
+  },
+  "bot": {
+    "dmFailed": "無法傳送私訊。你是否已將 Lapbot 以使用者安裝的方式加入帳號？如果還沒有，請點選下方按鈕加入。",
+    "addLapbot": "加入 Lapbot",
+    "seeSteps": "查看步驟"
+  },
+  "login": {
+    "title": "使用 Lapount 登入",
+    "approveInBrowser": "請在瀏覽器中核准",
+    "redo": "重試",
+    "cancel": "取消",
+    "desc": "登入後，私訊會傳送到已連結的 Discord。",
+    "button": "使用 Lapount 登入",
+    "requireDm": "登入 Lapount 以接收私訊",
+    "goAccount": "前往帳號"
+  },
+  "setup": {
+    "title": "使用 Lapount 登入",
+    "desc": "為確認私訊的接收對象，請使用 Lapount 帳號登入。",
+    "loginButton": "使用 Lapount 登入",
+    "discordTitle": "連結 Discord",
+    "discordDesc": "Lapount 尚未連結 Discord 帳號。連結後請按「確認」。",
+    "linkDiscord": "在 Lapount 中連結",
+    "confirm": "確認",
+    "testTitle": "測試傳送",
+    "testDesc": "將 Lapbot 加入帳號後，用測試傳送確認是否能收到私訊。收到後即完成設定。",
+    "testMethod": "如何加入 Lapbot",
+    "testButton": "測試傳送"
+  },
+  "update": {
+    "checking": "檢查中",
+    "downloading": "正在下載 v{version}",
+    "available": "有新版本 v{version}",
+    "none": "已是最新版本",
+    "error": "{message}",
+    "check": "檢查更新",
+    "dialogTitle": "現在更新嗎？",
+    "dialogDesc": "將更新至 v{version} 並重新啟動應用程式。",
+    "cancel": "取消",
+    "update": "更新並重新啟動"
+  },
+  "share": {
+    "title": "觀戰網址",
+    "public": "公開中",
+    "copied": "已複製",
+    "copy": "複製",
+    "reissue": "重新產生",
+    "issue": "產生網址",
+    "warning": "知道網址的任何人都能看到目前對戰中的玩家名稱。不會出現在搜尋結果中。",
+    "delete": "刪除"
+  },
+  "tabs": {
+    "home": "首頁",
+    "account": "帳號",
+    "settings": "設定"
+  },
+  "account": {
+    "loginLabel": "已登入 Lapount",
+    "row": {
+      "discordName": "Discord 名稱",
+      "discordUser": "Discord 使用者名稱",
+      "discordId": "Discord ID",
+      "discordEmail": "Discord 電子郵件",
+      "lapountEmail": "Lapount 電子郵件",
+      "lapountId": "Lapount ID",
+      "registered": "註冊日期",
+      "lastSignIn": "上次登入"
+    },
+    "noDiscord": {
+      "title": "Lapount 尚未連結 Discord。連結後，配對成功時會收到私訊。",
+      "button": "在 Lapount 中連結 Discord",
+      "note": "連結後重新開啟應用程式即可生效。"
+    },
+    "botMissing": "Lapbot 尚未加入帳號，因此收不到私訊。",
+    "botAdd": "要接收私訊，請將 Lapbot 加入帳號。",
+    "howToAdd": "查看加入方法",
+    "logout": "登出"
+  },
+  "settings": {
+    "notificationsTitle": "Discord 通知",
+    "notificationsDesc": "確認是否能收到配對成功的私訊。",
+    "testButton": "測試傳送",
+    "addLapbot": "加入 Lapbot",
+    "addMethod": "加入方法",
+    "autostart": "Windows 啟動時執行",
+    "bootShow": "啟動時顯示視窗",
+    "queueNotify": "開始排隊時也以私訊通知",
+    "lang": "語言",
+    "matchHistory": "查看戰績",
+    "contact": "聯絡我們",
+    "contactDiscordLabel": "Discord: ",
+    "contactDiscordSuffix": " 私訊",
+    "contactXSuffix": " 私訊",
+    "officialPage": "官方網頁",
+    "docs": "說明文件",
+    "github": "GitHub",
+    "version": "v{version}"
+  },
+  "party": {
+    "party": "隊伍（{count}/5）",
+    "you": "你"
+  },
+  "match": {
+    "map": "地圖",
+    "agentWaiting": "等待選擇",
+    "locked": "已鎖定",
+    "selecting": "選擇中",
+    "waiting": "等待",
+    "seconds": "秒",
+    "ariaLeft": "剩餘 {left} 秒"
+  }
+}

@@ -38,7 +38,43 @@ pub async fn load_names(http: &reqwest::Client) -> Names {
     if let Some(v) = get("https://valorant-api.com/v1/version").await {
         n.version = v["data"]["riotClientVersion"].as_str().unwrap_or("").into();
     }
+    let _ = BASE.set(n.clone());
     n
+}
+
+// load_names で取った日本語名(画面の言語の変換元)
+static BASE: std::sync::OnceLock<Names> = std::sync::OnceLock::new();
+
+// 画面の言語でのエージェント・マップ・階級名を取り、日本語名 → その言語の名前 として持つ。
+// 日本語名がまだ無い、取得済み、日本語のときは何もしない。新しく取れたら true
+pub async fn load_local(http: &reqwest::Client, code: &str) -> bool {
+    let Some((code, api)) = crate::i18n::api_lang(code) else { return false };
+    let Some(base) = BASE.get() else { return false };
+    if code == "ja" || crate::i18n::has_names(code) { return false; }
+    let get = |u: String| async move { http.get(u).send().await.ok()?.json::<Value>().await.ok() };
+    let mut m: HashMap<String, String> = HashMap::new();
+    if let Some(v) = get(format!("https://valorant-api.com/v1/agents?isPlayableCharacter=true&language={api}")).await {
+        for a in v["data"].as_array().into_iter().flatten() {
+            if let (Some(id), Some(nm)) = (a["uuid"].as_str(), a["displayName"].as_str())
+                && let Some(ja) = base.agents.get(&id.to_lowercase()) { m.insert(ja.clone(), nm.into()); }
+        }
+    }
+    if let Some(v) = get(format!("https://valorant-api.com/v1/maps?language={api}")).await {
+        for x in v["data"].as_array().into_iter().flatten() {
+            if let (Some(u), Some(nm)) = (x["mapUrl"].as_str(), x["displayName"].as_str())
+                && let Some((ja, _)) = base.maps.get(u) { m.insert(ja.clone(), nm.into()); }
+        }
+    }
+    if let Some(v) = get(format!("https://valorant-api.com/v1/competitivetiers?language={api}")).await
+        && let Some(t) = v["data"].as_array().and_then(|a| a.last()) {
+            for e in t["tiers"].as_array().into_iter().flatten() {
+                if let (Some(tn), Some(nm)) = (e["tier"].as_u64(), e["tierName"].as_str())
+                    && let Some(ja) = base.tiers.get(&tn) { m.insert(ja.clone(), nm.into()); }
+            }
+        }
+    if m.is_empty() { return false; } // 取れなかったら次の機会にやり直す
+    crate::i18n::set_names(code, m);
+    true
 }
 
 pub fn mode_name(q: &str) -> String {
@@ -78,15 +114,14 @@ pub async fn fetch(local: &reqwest::Client, remote: &reqwest::Client, names: &Na
     let mut nm: HashMap<String, String> = HashMap::new();
     if let Ok(r) = remote.put(format!("{pd}/name-service/v2/players")).bearer_auth(tok)
         .header("X-Riot-Entitlements-JWT", ent_tok).header("X-Riot-ClientPlatform", PLATFORM)
-        .header("X-Riot-ClientVersion", names.version.as_str()).json(&ids).send().await {
-        if let Ok(v) = r.json::<Value>().await {
+        .header("X-Riot-ClientVersion", names.version.as_str()).json(&ids).send().await
+        && let Ok(v) = r.json::<Value>().await {
             for e in v.as_array().into_iter().flatten() {
                 if let Some(s) = e["Subject"].as_str() {
                     nm.insert(s.into(), format!("{}#{}", e["GameName"].as_str().unwrap_or(""), e["TagLine"].as_str().unwrap_or("")));
                 }
             }
         }
-    }
     let players = team.iter().enumerate().map(|(i, p)| {
         let sub = p["Subject"].as_str().unwrap_or("");
         let cid = p["CharacterID"].as_str().unwrap_or("").to_lowercase();
@@ -171,8 +206,8 @@ pub async fn result(local: &reqwest::Client, remote: &reqwest::Client, names: &N
             "agent": names.agents.get(&cid).cloned().unwrap_or_default(),
             "team": p["teamId"].as_str().unwrap_or(""), "sub": sub,
             "k": st["kills"].as_u64().unwrap_or(0), "d": st["deaths"].as_u64().unwrap_or(0), "a": st["assists"].as_u64().unwrap_or(0),
-            "score": score, "acs": if rounds > 0 { score / rounds } else { 0 },
-            "hs": if tot > 0 { hs * 100 / tot } else { 0 },
+            "score": score, "acs": score.checked_div(rounds).unwrap_or(0),
+            "hs": (hs * 100).checked_div(tot).unwrap_or(0),
             "mvp": top > 0 && score == top, "me": sub == c.puuid,
         })
     }).collect();

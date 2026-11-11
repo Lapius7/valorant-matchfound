@@ -1,4 +1,5 @@
 use crate::config::*;
+use crate::i18n::t;
 use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize, Clone)]
@@ -83,17 +84,17 @@ pub async fn device_poll(c: &reqwest::Client, code: &str) -> PollResult {
     let Ok(p) = r.json::<Poll>().await else { return PollResult::Pending };
     match p.status.as_str() {
         "pending" => PollResult::Pending,
-        "denied" => PollResult::Failed("ログインが拒否されました".into()),
-        "expired" | "invalid" => PollResult::Failed("コードの有効期限が切れました".into()),
-        "already_used" => PollResult::Failed("このコードは使用済みです".into()),
+        "denied" => PollResult::Failed(t("auth.denied")),
+        "expired" | "invalid" => PollResult::Failed(t("auth.expired")),
+        "already_used" => PollResult::Failed(t("auth.used")),
         "authorized" => match (p.access_token, p.refresh_token) {
             (Some(a), Some(r)) => {
                 let email = user_email(c, &a).await.unwrap_or_default();
                 PollResult::Done(Session { exp: now() + 3000, access: a, refresh: r, email })
             }
-            _ => PollResult::Failed("トークンを受け取れませんでした".into()),
+            _ => PollResult::Failed(t("auth.noToken")),
         },
-        s => PollResult::Failed(format!("予期しない状態です: {s}")),
+        s => PollResult::Failed(format!("{}: {s}", t("auth.unexpected"))),
     }
 }
 
@@ -109,7 +110,7 @@ struct Tok { access_token: String, refresh_token: String, expires_in: u64 }
 
 // 失効が近ければ更新して返す。refresh token は更新のたびに変わるので必ず保存し直す
 pub async fn fresh(c: &reqwest::Client, force: bool) -> Result<Session, String> {
-    let s = load().ok_or("ログインしていません")?;
+    let s = load().ok_or_else(|| t("auth.notLoggedIn"))?;
     if !force && s.exp > now() + 120 {
         return Ok(s);
     }
@@ -120,7 +121,7 @@ pub async fn fresh(c: &reqwest::Client, force: bool) -> Result<Session, String> 
         .send().await.map_err(|e| e.to_string())?;
     if r.status().is_client_error() {
         clear();
-        return Err("ログインの有効期限が切れました。もう一度ログインしてください".into());
+        return Err(t("auth.sessionExpired"));
     }
     let t: Tok = r.json().await.map_err(|e| e.to_string())?;
     let n = Session { access: t.access_token, refresh: t.refresh_token, email: s.email, exp: now() + t.expires_in.saturating_sub(60) };

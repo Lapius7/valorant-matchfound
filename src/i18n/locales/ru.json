@@ -1,0 +1,142 @@
+{
+  "app": {
+    "title": "VALORANT Matchfound",
+    "setupProgress": "Настройка {num} / {total}"
+  },
+  "phase": {
+    "closed": {
+      "label": "VALORANT не запущен",
+      "hint": "Отслеживание начнётся автоматически после запуска"
+    },
+    "starting": {
+      "label": "Подключение",
+      "hint": "Дождитесь, пока VALORANT запустится"
+    },
+    "menus": {
+      "label": "Ожидание",
+      "hint": "Начните поиск — когда матч найдётся, мы пришлём ЛС"
+    },
+    "queue": {
+      "label": "Поиск матча",
+      "hint": "Можно ждать здесь, пока матч не найдётся"
+    },
+    "pregame": {
+      "label": "Матч найден",
+      "hint": "Переходите к выбору агента"
+    },
+    "ingame": {
+      "label": "В игре",
+      "hint": "Можно оставить приложение работать до конца матча"
+    }
+  },
+  "bot": {
+    "dmFailed": "Не удалось отправить ЛС. Вы установили Lapbot в свой аккаунт (установка для пользователя)? Если нет, добавьте его кнопкой ниже.",
+    "addLapbot": "Добавить Lapbot",
+    "seeSteps": "Инструкция"
+  },
+  "login": {
+    "title": "Вход через Lapount",
+    "approveInBrowser": "Подтвердите вход в браузере",
+    "redo": "Заново",
+    "cancel": "Отмена",
+    "desc": "После входа ЛС будут приходить в привязанный Discord.",
+    "button": "Войти через Lapount",
+    "requireDm": "Войдите через Lapount, чтобы получать ЛС",
+    "goAccount": "К аккаунту"
+  },
+  "setup": {
+    "title": "Вход через Lapount",
+    "desc": "Войдите в аккаунт Lapount, чтобы указать, куда отправлять ЛС.",
+    "loginButton": "Войти через Lapount",
+    "discordTitle": "Привязка Discord",
+    "discordDesc": "К Lapount не привязан аккаунт Discord. Привяжите его и нажмите «Проверить».",
+    "linkDiscord": "Привязать в Lapount",
+    "confirm": "Проверить",
+    "testTitle": "Тестовое сообщение",
+    "testDesc": "Добавьте Lapbot в аккаунт и отправьте тестовое сообщение, чтобы проверить, приходят ли ЛС. Когда оно придёт, настройка завершена.",
+    "testMethod": "Как добавить Lapbot",
+    "testButton": "Отправить тест"
+  },
+  "update": {
+    "checking": "Проверка",
+    "downloading": "Загрузка v{version}",
+    "available": "Доступна v{version}",
+    "none": "Последняя версия",
+    "error": "{message}",
+    "check": "Проверить обновления",
+    "dialogTitle": "Обновить сейчас?",
+    "dialogDesc": "Приложение обновится до v{version} и перезапустится.",
+    "cancel": "Отмена",
+    "update": "Обновить и перезапустить"
+  },
+  "share": {
+    "title": "Ссылка для просмотра",
+    "public": "Открыта",
+    "copied": "Скопировано",
+    "copy": "Копировать",
+    "reissue": "Обновить",
+    "issue": "Создать ссылку",
+    "warning": "Любой, у кого есть ссылка, увидит имена игроков в текущем матче. В поиске она не появится.",
+    "delete": "Удалить"
+  },
+  "tabs": {
+    "home": "Главная",
+    "account": "Аккаунт",
+    "settings": "Настройки"
+  },
+  "account": {
+    "loginLabel": "Вход в Lapount выполнен",
+    "row": {
+      "discordName": "Имя в Discord",
+      "discordUser": "Имя пользователя Discord",
+      "discordId": "Discord ID",
+      "discordEmail": "Почта Discord",
+      "lapountEmail": "Почта Lapount",
+      "lapountId": "Lapount ID",
+      "registered": "Регистрация",
+      "lastSignIn": "Последний вход"
+    },
+    "noDiscord": {
+      "title": "К Lapount не привязан Discord. После привязки вы будете получать ЛС о найденном матче.",
+      "button": "Привязать Discord в Lapount",
+      "note": "Изменения вступят в силу после перезапуска приложения."
+    },
+    "botMissing": "Lapbot не добавлен в аккаунт, поэтому ЛС не приходят.",
+    "botAdd": "Чтобы получать ЛС, добавьте Lapbot в аккаунт.",
+    "howToAdd": "Как добавить",
+    "logout": "Выйти"
+  },
+  "settings": {
+    "notificationsTitle": "Уведомления Discord",
+    "notificationsDesc": "Проверьте, приходят ли ЛС о найденном матче.",
+    "testButton": "Отправить тест",
+    "addLapbot": "Добавить Lapbot",
+    "addMethod": "Как добавить",
+    "autostart": "Запускать вместе с Windows",
+    "bootShow": "Показывать окно при запуске",
+    "queueNotify": "Уведомлять в ЛС и о начале поиска",
+    "lang": "Язык",
+    "matchHistory": "История матчей",
+    "contact": "Связь",
+    "contactDiscordLabel": "Discord: ",
+    "contactDiscordSuffix": " (ЛС)",
+    "contactXSuffix": " (ЛС)",
+    "officialPage": "Официальная страница",
+    "docs": "Документация",
+    "github": "GitHub",
+    "version": "v{version}"
+  },
+  "party": {
+    "party": "Группа ({count}/5)",
+    "you": "Вы"
+  },
+  "match": {
+    "map": "Карта",
+    "agentWaiting": "Ждёт выбора",
+    "locked": "Выбран",
+    "selecting": "Выбирает",
+    "waiting": "Ожидание",
+    "seconds": "с",
+    "ariaLeft": "Осталось {left} с"
+  }
+}

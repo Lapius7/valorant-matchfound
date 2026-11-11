@@ -1,0 +1,56 @@
+{
+  "tray": {
+    "open": "Apri",
+    "update": "Cerca aggiornamenti",
+    "quit": "Esci"
+  },
+  "auth": {
+    "denied": "Accesso negato",
+    "expired": "Il codice è scaduto",
+    "used": "Questo codice è già stato usato",
+    "noToken": "Impossibile ricevere il token",
+    "unexpected": "Stato imprevisto",
+    "notLoggedIn": "Accesso non effettuato",
+    "sessionExpired": "L’accesso è scaduto. Accedi di nuovo"
+  },
+  "update": {
+    "noServer": "Impossibile connettersi al server degli aggiornamenti",
+    "checkFailed": "Controllo aggiornamenti non riuscito",
+    "badInfo": "Impossibile leggere le info sull’aggiornamento",
+    "noInstaller": "Programma di installazione non trovato",
+    "noHash": "Impossibile aggiornare: hash mancante",
+    "badSource": "Origine del download imprevista",
+    "downloadFailed": "Download non riuscito",
+    "mismatch": "Il file scaricato non corrisponde. Aggiornamento annullato",
+    "latest": "Aggiornato",
+    "found": "Nuova versione disponibile"
+  },
+  "notify": {
+    "skipped": "Saltato: un DM è appena stato inviato",
+    "sent": "DM inviato su Discord",
+    "noConnection": "Impossibile connettersi",
+    "noServer": "Impossibile connettersi al server",
+    "invalidLogin": "Accesso non valido. Accedi di nuovo",
+    "noDiscord": "Nessun Discord collegato a Lapount",
+    "dmClosed": "I DM sono bloccati. Aggiungi Lapbot al tuo account e consenti i DM",
+    "failed": "Invio non riuscito",
+    "invalidAction": "Azione non valida"
+  },
+  "mode": {
+    "unrated": "Non competitiva",
+    "competitive": "Competitiva",
+    "swiftplay": "Swiftplay",
+    "spikerush": "Corsa alla Spike",
+    "deathmatch": "Deathmatch",
+    "ggteam": "Escalation",
+    "onefa": "Replica",
+    "hurm": "Deathmatch a squadre",
+    "premier": "Premier",
+    "snowball": "Battaglia a palle di neve",
+    "custom": "Personalizzata",
+    "test": "Test",
+    "testSend": "Invio di prova",
+    "unknown": "Sconosciuto"
+  },
+  "player": "Giocatore {n}"
+}

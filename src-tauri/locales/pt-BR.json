@@ -1,0 +1,56 @@
+{
+  "tray": {
+    "open": "Abrir",
+    "update": "Verificar atualizações",
+    "quit": "Sair"
+  },
+  "auth": {
+    "denied": "Login recusado",
+    "expired": "O código expirou",
+    "used": "Este código já foi usado",
+    "noToken": "Não foi possível receber o token",
+    "unexpected": "Status inesperado",
+    "notLoggedIn": "Você não está conectado",
+    "sessionExpired": "Seu login expirou. Entre novamente"
+  },
+  "update": {
+    "noServer": "Não foi possível conectar ao servidor de atualização",
+    "checkFailed": "Falha ao verificar atualizações",
+    "badInfo": "Não foi possível ler as informações da atualização",
+    "noInstaller": "Instalador não encontrado",
+    "noHash": "Não é possível atualizar: hash ausente",
+    "badSource": "Origem de download inesperada",
+    "downloadFailed": "Falha no download",
+    "mismatch": "O arquivo baixado não confere. Atualização cancelada",
+    "latest": "Atualizado",
+    "found": "Nova versão disponível"
+  },
+  "notify": {
+    "skipped": "Ignorado: uma DM acabou de ser enviada",
+    "sent": "DM enviada no Discord",
+    "noConnection": "Sem conexão",
+    "noServer": "Não foi possível conectar ao servidor",
+    "invalidLogin": "Login inválido. Entre novamente",
+    "noDiscord": "Nenhum Discord vinculado ao Lapount",
+    "dmClosed": "As DMs estão bloqueadas. Adicione o Lapbot à sua conta e permita DMs",
+    "failed": "Falha ao enviar",
+    "invalidAction": "Ação inválida"
+  },
+  "mode": {
+    "unrated": "Sem classificação",
+    "competitive": "Competitivo",
+    "swiftplay": "Swiftplay",
+    "spikerush": "Disputa da Spike",
+    "deathmatch": "Mata-mata",
+    "ggteam": "Escalada",
+    "onefa": "Replicação",
+    "hurm": "Mata-mata em equipe",
+    "premier": "Premier",
+    "snowball": "Guerra de bolas de neve",
+    "custom": "Personalizada",
+    "test": "Teste",
+    "testSend": "Envio de teste",
+    "unknown": "Desconhecido"
+  },
+  "player": "Jogador {n}"
+}

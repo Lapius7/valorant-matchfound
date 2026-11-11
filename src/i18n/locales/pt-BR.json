@@ -1,0 +1,142 @@
+{
+  "app": {
+    "title": "VALORANT Matchfound",
+    "setupProgress": "Configuração {num} / {total}"
+  },
+  "phase": {
+    "closed": {
+      "label": "O VALORANT não está aberto",
+      "hint": "O monitoramento começa sozinho quando você abrir"
+    },
+    "starting": {
+      "label": "Conectando",
+      "hint": "Aguarde o VALORANT terminar de abrir"
+    },
+    "menus": {
+      "label": "Aguardando",
+      "hint": "Comece a procurar partida e avisaremos por DM quando ela for encontrada"
+    },
+    "queue": {
+      "label": "Procurando partida",
+      "hint": "Você pode esperar aqui até encontrar"
+    },
+    "pregame": {
+      "label": "Partida encontrada",
+      "hint": "Vá para a seleção de agente"
+    },
+    "ingame": {
+      "label": "Em partida",
+      "hint": "Pode deixar aberto até a partida terminar"
+    }
+  },
+  "bot": {
+    "dmFailed": "Não foi possível enviar a DM. Você instalou o Lapbot na sua conta (instalação de usuário)? Se não, adicione pelo botão abaixo.",
+    "addLapbot": "Adicionar Lapbot",
+    "seeSteps": "Ver passos"
+  },
+  "login": {
+    "title": "Entrar com Lapount",
+    "approveInBrowser": "Aprove no navegador",
+    "redo": "Tentar de novo",
+    "cancel": "Cancelar",
+    "desc": "Ao entrar, as DMs chegam no seu Discord vinculado.",
+    "button": "Entrar com Lapount",
+    "requireDm": "Entre com Lapount para receber DMs",
+    "goAccount": "Ir para a conta"
+  },
+  "setup": {
+    "title": "Entrar com Lapount",
+    "desc": "Entre com sua conta Lapount para definir para onde enviar as DMs.",
+    "loginButton": "Entrar com Lapount",
+    "discordTitle": "Vincular Discord",
+    "discordDesc": "Nenhuma conta do Discord está vinculada ao Lapount. Vincule e toque em “Verificar”.",
+    "linkDiscord": "Vincular no Lapount",
+    "confirm": "Verificar",
+    "testTitle": "DM de teste",
+    "testDesc": "Depois de adicionar o Lapbot à sua conta, envie uma DM de teste para ver se ela chega. Quando chegar, a configuração está concluída.",
+    "testMethod": "Como adicionar o Lapbot",
+    "testButton": "Enviar DM de teste"
+  },
+  "update": {
+    "checking": "Verificando",
+    "downloading": "Baixando v{version}",
+    "available": "v{version} disponível",
+    "none": "Atualizado",
+    "error": "{message}",
+    "check": "Verificar atualizações",
+    "dialogTitle": "Atualizar agora?",
+    "dialogDesc": "Atualiza para a v{version} e reinicia o app.",
+    "cancel": "Cancelar",
+    "update": "Atualizar e reiniciar"
+  },
+  "share": {
+    "title": "URL de espectador",
+    "public": "Pública",
+    "copied": "Copiado",
+    "copy": "Copiar",
+    "reissue": "Gerar nova",
+    "issue": "Gerar URL",
+    "warning": "Qualquer pessoa com a URL pode ver os nomes dos jogadores da partida atual. Ela não aparece em buscas.",
+    "delete": "Excluir"
+  },
+  "tabs": {
+    "home": "Início",
+    "account": "Conta",
+    "settings": "Configurações"
+  },
+  "account": {
+    "loginLabel": "Conectado ao Lapount",
+    "row": {
+      "discordName": "Nome no Discord",
+      "discordUser": "Usuário do Discord",
+      "discordId": "ID do Discord",
+      "discordEmail": "E-mail do Discord",
+      "lapountEmail": "E-mail do Lapount",
+      "lapountId": "ID do Lapount",
+      "registered": "Cadastro",
+      "lastSignIn": "Último acesso"
+    },
+    "noDiscord": {
+      "title": "Nenhum Discord está vinculado ao Lapount. Depois de vincular, você recebe uma DM quando uma partida for encontrada.",
+      "button": "Vincular Discord no Lapount",
+      "note": "A mudança vale depois de reabrir o app."
+    },
+    "botMissing": "O Lapbot não foi adicionado à sua conta, então as DMs não chegam.",
+    "botAdd": "Para receber DMs, adicione o Lapbot à sua conta.",
+    "howToAdd": "Ver como adicionar",
+    "logout": "Sair"
+  },
+  "settings": {
+    "notificationsTitle": "Notificações do Discord",
+    "notificationsDesc": "Veja se as DMs de partida encontrada chegam.",
+    "testButton": "Enviar DM de teste",
+    "addLapbot": "Adicionar Lapbot",
+    "addMethod": "Como adicionar",
+    "autostart": "Iniciar com o Windows",
+    "bootShow": "Mostrar janela ao iniciar",
+    "queueNotify": "Avisar por DM também ao começar a procurar",
+    "lang": "Idioma",
+    "matchHistory": "Histórico de partidas",
+    "contact": "Contato",
+    "contactDiscordLabel": "Discord: ",
+    "contactDiscordSuffix": " (DM)",
+    "contactXSuffix": " (DM)",
+    "officialPage": "Página oficial",
+    "docs": "Documentação",
+    "github": "GitHub",
+    "version": "v{version}"
+  },
+  "party": {
+    "party": "Grupo ({count}/5)",
+    "you": "Você"
+  },
+  "match": {
+    "map": "Mapa",
+    "agentWaiting": "Aguardando escolha",
+    "locked": "Travado",
+    "selecting": "Escolhendo",
+    "waiting": "Aguardando",
+    "seconds": "s",
+    "ariaLeft": "Faltam {left} s"
+  }
+}
