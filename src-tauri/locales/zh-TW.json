@@ -16,6 +16,7 @@
   "update": {
     "noServer": "無法連線到更新伺服器",
     "checkFailed": "檢查更新失敗",
+    "rateLimited": "已達到 GitHub 的檢查次數上限，稍後將再次檢查",
     "badInfo": "無法讀取更新資訊",
     "noInstaller": "找不到安裝程式",
     "noHash": "缺少雜湊值，無法更新",

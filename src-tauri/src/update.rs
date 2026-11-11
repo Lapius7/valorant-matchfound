@@ -17,8 +17,13 @@ pub async fn check(c: &reqwest::Client) -> Result<Option<Release>, String> {
     let r = c.get(format!("https://api.github.com/repos/{REPO}/releases/latest"))
         .header("User-Agent", UA).header("Accept", "application/vnd.github+json")
         .send().await.map_err(|_| t("update.noServer"))?;
-    if r.status().as_u16() == 404 { return Ok(None); }
-    if !r.status().is_success() { return Err(format!("{} ({})", t("update.checkFailed"), r.status().as_u16())); }
+    let code = r.status().as_u16();
+    if code == 404 { return Ok(None); }
+    // ログインなしの API は同じ回線から1時間に60回まで。超えたら API を使わない方法で確かめる
+    if code == 403 || code == 429 {
+        return check_without_api(c).await.map_err(|_| t("update.rateLimited"));
+    }
+    if !r.status().is_success() { return Err(format!("{} ({})", t("update.checkFailed"), code)); }
     let v: Value = r.json().await.map_err(|_| t("update.badInfo"))?;
     let tag = v["tag_name"].as_str().unwrap_or("");
     if parse(tag) <= parse(env!("CARGO_PKG_VERSION")) { return Ok(None); }
@@ -31,6 +36,26 @@ pub async fn check(c: &reqwest::Client) -> Result<Option<Release>, String> {
     let sha256 = a["digest"].as_str().and_then(|d| d.strip_prefix("sha256:")).ok_or_else(|| t("update.noHash"))?.to_lowercase();
     if !url.starts_with(&format!("https://github.com/{REPO}/releases/download/")) { return Err(t("update.badSource")); }
     Ok(Some(Release { version: tag.trim_start_matches('v').to_string(), url, sha256 }))
+}
+
+// API の回数制限にかかったとき用。releases/latest の転送先から版を読み、
+// インストーラーと一緒に置いた <インストーラー名>.sha256 から SHA-256 を取る
+async fn check_without_api(c: &reqwest::Client) -> Result<Option<Release>, ()> {
+    let nr = reqwest::Client::builder().redirect(reqwest::redirect::Policy::none())
+        .timeout(std::time::Duration::from_secs(15)).build().map_err(|_| ())?;
+    let r = nr.get(format!("https://github.com/{REPO}/releases/latest")).header("User-Agent", UA).send().await.map_err(|_| ())?;
+    let loc = r.headers().get("location").and_then(|v| v.to_str().ok()).ok_or(())?;
+    let tag = loc.rsplit_once("/releases/tag/").map(|(_, t)| t.to_string()).ok_or(())?;
+    if tag.is_empty() || !tag.chars().all(|ch| ch.is_ascii_alphanumeric() || ch == '.' || ch == '-') { return Err(()); }
+    if parse(&tag) <= parse(env!("CARGO_PKG_VERSION")) { return Ok(None); }
+    let version = tag.trim_start_matches('v').to_string();
+    let url = format!("https://github.com/{REPO}/releases/download/{tag}/valorant-matchfound-installer-v{version}.exe");
+    let r = c.get(format!("{url}.sha256")).header("User-Agent", UA).send().await.map_err(|_| ())?;
+    if !r.status().is_success() { return Err(()); }
+    let body = r.text().await.map_err(|_| ())?;
+    let sha256 = body.split_whitespace().next().unwrap_or("").to_lowercase();
+    if sha256.len() != 64 || !sha256.chars().all(|ch| ch.is_ascii_hexdigit()) { return Err(()); }
+    Ok(Some(Release { version, url, sha256 }))
 }
 
 pub async fn download(rel: &Release) -> Result<std::path::PathBuf, String> {

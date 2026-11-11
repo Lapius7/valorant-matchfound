@@ -16,6 +16,7 @@
   "update": {
     "noServer": "无法连接到更新服务器",
     "checkFailed": "检查更新失败",
+    "rateLimited": "已达到 GitHub 的检查次数上限，稍后将再次检查",
     "badInfo": "无法读取更新信息",
     "noInstaller": "找不到安装程序",
     "noHash": "缺少哈希值，无法更新",

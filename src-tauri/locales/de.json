@@ -16,6 +16,7 @@
   "update": {
     "noServer": "Keine Verbindung zum Update-Server",
     "checkFailed": "Update-Prüfung fehlgeschlagen",
+    "rateLimited": "GitHub-Abfragelimit erreicht. Später erneut prüfen",
     "badInfo": "Update-Infos konnten nicht gelesen werden",
     "noInstaller": "Installer nicht gefunden",
     "noHash": "Update nicht möglich: Hash fehlt",

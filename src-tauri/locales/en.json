@@ -16,6 +16,7 @@
   "update": {
     "noServer": "Can't connect to the update server",
     "checkFailed": "Failed to check for updates",
+    "rateLimited": "GitHub's check limit was reached. Will try again later",
     "badInfo": "Couldn't read the update info",
     "noInstaller": "Installer not found",
     "noHash": "Can't update because the hash is missing",

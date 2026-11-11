@@ -16,6 +16,7 @@
   "update": {
     "noServer": "Impossibile connettersi al server degli aggiornamenti",
     "checkFailed": "Controllo aggiornamenti non riuscito",
+    "rateLimited": "Limite di controlli GitHub raggiunto. Nuovo tentativo più tardi",
     "badInfo": "Impossibile leggere le info sull’aggiornamento",
     "noInstaller": "Programma di installazione non trovato",
     "noHash": "Impossibile aggiornare: hash mancante",

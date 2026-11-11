@@ -16,6 +16,7 @@
   "update": {
     "noServer": "Impossible de joindre le serveur de mise à jour",
     "checkFailed": "Échec de la recherche de mises à jour",
+    "rateLimited": "Limite de vérifications GitHub atteinte. Nouvel essai plus tard",
     "badInfo": "Impossible de lire les infos de mise à jour",
     "noInstaller": "Programme d’installation introuvable",
     "noHash": "Mise à jour impossible : hachage manquant",
