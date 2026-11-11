@@ -1,0 +1,56 @@
+{
+  "tray": {
+    "open": "打开",
+    "update": "检查更新",
+    "quit": "退出"
+  },
+  "auth": {
+    "denied": "登录被拒绝",
+    "expired": "代码已过期",
+    "used": "此代码已被使用",
+    "noToken": "未能获取令牌",
+    "unexpected": "意外的状态",
+    "notLoggedIn": "未登录",
+    "sessionExpired": "登录已过期，请重新登录"
+  },
+  "update": {
+    "noServer": "无法连接到更新服务器",
+    "checkFailed": "检查更新失败",
+    "badInfo": "无法读取更新信息",
+    "noInstaller": "找不到安装程序",
+    "noHash": "缺少哈希值，无法更新",
+    "badSource": "下载来源与预期不符",
+    "downloadFailed": "下载失败",
+    "mismatch": "下载的文件不一致，已中止更新",
+    "latest": "已是最新版本",
+    "found": "有新版本"
+  },
+  "notify": {
+    "skipped": "刚刚已发送，本次已跳过",
+    "sent": "已通过 Discord 发送私信",
+    "noConnection": "无法连接",
+    "noServer": "无法连接到服务器",
+    "invalidLogin": "登录无效，请重新登录",
+    "noDiscord": "Lapount 未关联 Discord",
+    "dmClosed": "当前设置无法接收私信。请将 Lapbot 添加到账号并允许私信",
+    "failed": "发送失败",
+    "invalidAction": "无效的操作"
+  },
+  "mode": {
+    "unrated": "非排位",
+    "competitive": "排位赛",
+    "swiftplay": "快速模式",
+    "spikerush": "爆能快攻",
+    "deathmatch": "死斗",
+    "ggteam": "逐级战",
+    "onefa": "复制战",
+    "hurm": "团队死斗",
+    "premier": "冠军赛",
+    "snowball": "雪球大战",
+    "custom": "自定义",
+    "test": "测试",
+    "testSend": "测试发送",
+    "unknown": "未知"
+  },
+  "player": "玩家{n}"
+}

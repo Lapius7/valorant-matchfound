@@ -1,5 +1,6 @@
 mod auth;
 mod config;
+mod i18n;
 mod pregame;
 mod riot;
 mod update;
@@ -32,7 +33,7 @@ struct Snapshot {
 }
 
 #[derive(Serialize, Clone)]
-struct Notify { at: u64, ok: bool, message: String }
+struct Notify { at: u64, ok: bool, message: String, #[serde(rename = "dmClosed")] dm_closed: bool }
 
 struct Shared {
     snap: Mutex<Snapshot>,
@@ -46,7 +47,7 @@ type St = Arc<Shared>;
 fn push(app: &AppHandle, st: &Shared, f: impl FnOnce(&mut Snapshot)) {
     let mut s = st.snap.lock().unwrap();
     f(&mut s);
-    let _ = app.emit("state", s.clone());
+    let _ = app.emit("state", localized(&s));
 }
 
 fn show(app: &AppHandle) {
@@ -58,7 +59,59 @@ fn show(app: &AppHandle) {
 }
 
 #[tauri::command]
-fn get_state(st: State<'_, St>) -> Snapshot { st.snap.lock().unwrap().clone() }
+fn get_state(st: State<'_, St>) -> Snapshot { localized(&st.snap.lock().unwrap()) }
+
+fn localized(s: &Snapshot) -> Snapshot {
+    let mut s = s.clone();
+    if i18n::is_ja() { return s; }
+    let tr_field = |v: &mut serde_json::Value, k: &str| {
+        if let Some(t) = v[k].as_str().map(i18n::name) { v[k] = t.into(); }
+    };
+    if let Some(m) = s.match_info.as_mut() {
+        tr_field(m, "mode");
+        tr_field(m, "map");
+        if let Some(ps) = m["players"].as_array_mut() {
+            for p in ps { tr_field(p, "agent"); if let Some(n) = p["name"].as_str().map(i18n::player) { p["name"] = n.into(); } }
+        }
+    }
+    for p in s.party.iter_mut() { tr_field(p, "rank"); }
+    s
+}
+
+// トレイのメニュー(項目, 文言のキー)。言語を変えたら書き換える
+struct TrayItems(Vec<(MenuItem<tauri::Wry>, &'static str)>);
+
+fn lang_file(app: &AppHandle) -> Option<std::path::PathBuf> { app.path().app_data_dir().ok().map(|d| d.join("lang")) }
+
+// 保存してある言語(アプリかインストーラーが書いたもの)
+#[tauri::command]
+fn get_lang(app: AppHandle) -> Option<String> {
+    let l = std::fs::read_to_string(lang_file(&app)?).ok()?;
+    i18n::api_lang(l.trim()).map(|(c, _)| c.to_string())
+}
+
+// 画面の言語を受け取り、保存してトレイと状態の表示を合わせる
+#[tauri::command]
+fn set_lang(app: AppHandle, st: State<'_, St>, lang: String) {
+    if i18n::api_lang(&lang).is_none() { return; }
+    let changed = i18n::set(&lang);
+    if let Some(f) = lang_file(&app) { let _ = std::fs::create_dir_all(f.parent().unwrap()); let _ = std::fs::write(f, &lang); }
+    if let Some(t) = app.try_state::<TrayItems>() {
+        for (item, key) in &t.0 { let _ = item.set_text(i18n::t(key)); }
+    }
+    // 前の言語で作ったメッセージは消す(DM 拒否のバナーは bot_missing で別に出るので残る)
+    push(&app, &st, |s| {
+        if !changed { return; }
+        s.login_error = None;
+        s.last_notify = None;
+        if s.update.as_ref().and_then(|u| u["state"].as_str()) == Some("error") { s.update = None; }
+    });
+    // その言語のエージェント・マップ・階級名がまだ無ければ取りに行き、取れたら表示し直す
+    let (a, st) = (app.clone(), st.inner().clone());
+    tauri::async_runtime::spawn(async move {
+        if pregame::load_local(&st.http, &lang).await { push(&a, &st, |_| {}); }
+    });
+}
 
 #[tauri::command]
 fn get_autostart(app: AppHandle) -> bool { app.autolaunch().is_enabled().unwrap_or(false) }
@@ -112,7 +165,7 @@ async fn login(app: AppHandle, st: State<'_, St>) -> Result<(), String> {
                 }
             }
         }
-        push(&app, &st, |s| { s.login_code = None; s.login_error = Some("コードの有効期限が切れました".into()); });
+        push(&app, &st, |s| { s.login_code = None; s.login_error = Some(i18n::t("auth.expired")); });
     });
     Ok(())
 }
@@ -134,22 +187,27 @@ fn logout(app: AppHandle, st: State<'_, St>) {
 async fn notify(app: &AppHandle, st: &Shared, body: serde_json::Value) -> Option<String> {
     let result = send(st, body).await;
     let (ok, message, id) = match result {
-        Ok(v) => (true, if v["skipped"].is_string() { "直前に送信済みのため、今回はスキップしました".to_string() } else { "Discord に DM を送りました".to_string() }, v["messageId"].as_str().map(String::from)),
+        Ok(v) => (true, if v["skipped"].is_string() { i18n::t("notify.skipped") } else { i18n::t("notify.sent") }, v["messageId"].as_str().map(String::from)),
         Err(m) => (false, m, None),
     };
-    push(app, st, |s| { s.bot_missing = !ok && message.starts_with("DM を受け取れない"); s.last_notify = Some(Notify { at: auth::now(), ok, message }); });
+    push(app, st, |s| { let closed = !ok && message == dm_closed_msg(); s.bot_missing = closed; s.last_notify = Some(Notify { at: auth::now(), ok, message, dm_closed: closed }); });
     id
 }
 
 // サーバーのキャッシュを引く(GET)。見つからなければ Err
 async fn get_json(st: &Shared, url: &str) -> Result<serde_json::Value, String> {
     let sess = auth::fresh(&st.http, false).await?;
-    let r = st.http.get(url).bearer_auth(&sess.access).send().await.map_err(|_| "接続できません".to_string())?;
+    let r = st.http.get(url).bearer_auth(&sess.access).send().await.map_err(|_| i18n::t("notify.noConnection"))?;
     if r.status().as_u16() != 200 { return Err("not found".into()); }
     r.json().await.map_err(|_| "bad json".into())
 }
 
-async fn send(st: &Shared, body: serde_json::Value) -> Result<serde_json::Value, String> {
+fn dm_closed_msg() -> String {
+    i18n::t("notify.dmClosed")
+}
+
+async fn send(st: &Shared, mut body: serde_json::Value) -> Result<serde_json::Value, String> {
+    body["lang"] = i18n::lang().into(); // Bot が DM をこの言語で書くため
     send_to(st, config::NOTIFY_URL, body).await
 }
 
@@ -157,24 +215,24 @@ async fn send_to(st: &Shared, url: &str, body: serde_json::Value) -> Result<serd
     for attempt in 0..2 {
         let sess = auth::fresh(&st.http, attempt == 1).await?;
         let r = st.http.post(url).bearer_auth(&sess.access).json(&body)
-            .send().await.map_err(|_| "サーバーに接続できません".to_string())?;
+            .send().await.map_err(|_| i18n::t("notify.noServer"))?;
         let status = r.status().as_u16();
         // 前段の nginx が 4xx の本文を差し替えることがあるので、ステータスだけで判定する
         match status {
             200 => return Ok(r.json().await.unwrap_or_default()),
             401 if attempt == 0 => continue,
-            401 => return Err("ログインが無効です。もう一度ログインしてください".into()),
-            403 => return Err("Lapount に Discord が連携されていません".into()),
-            409 => return Err("DM を受け取れない設定です。Lapbot をアカウントに追加し、DM を許可してください".into()),
-            _ => return Err(format!("送信に失敗しました ({status})")),
+            401 => return Err(i18n::t("notify.invalidLogin")),
+            403 => return Err(i18n::t("notify.noDiscord")),
+            409 => return Err(dm_closed_msg()),
+            _ => return Err(format!("{} ({status})", i18n::t("notify.failed"))),
         }
     }
-    Err("送信に失敗しました".into())
+    Err(i18n::t("notify.failed"))
 }
 
 #[tauri::command]
 async fn send_test(app: AppHandle, st: State<'_, St>) -> Result<(), String> {
-    notify(&app, &st, serde_json::json!({"phase": "pregame", "test": true, "mode": "テスト", "map": "テスト送信"})).await;
+    notify(&app, &st, serde_json::json!({"phase": "pregame", "test": true, "mode": i18n::t("mode.test"), "map": i18n::t("mode.testSend")})).await;
     let ok = st.snap.lock().unwrap().last_notify.as_ref().map(|n| n.ok).unwrap_or(false);
     if ok { mark_setup(&app); push(&app, &st, |s| s.setup_done = true); }
     Ok(())
@@ -191,7 +249,7 @@ async fn share_call(app: &AppHandle, st: &Shared, action: &str) -> Result<(), St
 
 #[tauri::command]
 async fn share_op(app: AppHandle, st: State<'_, St>, action: String) -> Result<(), String> {
-    if !matches!(action.as_str(), "create" | "revoke" | "status") { return Err("不正な操作です".into()); }
+    if !matches!(action.as_str(), "create" | "revoke" | "status") { return Err(i18n::t("notify.invalidAction")); }
     share_call(&app, &st, &action).await
 }
 
@@ -222,10 +280,10 @@ async fn do_update(app: &AppHandle, st: &Shared, install: bool) -> bool {
     set_update(app, st, "checking", "", "");
     let rel = match update::check(&st.http).await {
         Ok(Some(r)) => r,
-        Ok(None) => { set_update(app, st, "none", "", "最新版です"); return false; }
+        Ok(None) => { set_update(app, st, "none", "", &i18n::t("update.latest")); return false; }
         Err(m) => { set_update(app, st, "error", "", &m); return false; }
     };
-    if !install { set_update(app, st, "available", &rel.version, "新しい版があります"); return false; }
+    if !install { set_update(app, st, "available", &rel.version, &i18n::t("update.found")); return false; }
     set_update(app, st, "downloading", &rel.version, "");
     match update::download(&rel).await {
         Ok(path) => match update::launch(&path) {
@@ -277,6 +335,7 @@ fn clear_state(app: &AppHandle) { if let Some(f) = saved_path(app) { let _ = std
 // 編集に失敗したら、成功するまで間隔を空けて再送する(Bot の再起動・ネットワーク断への対策)
 async fn monitor(app: AppHandle, st: St) {
     let names = pregame::load_names(&st.http).await;
+    if pregame::load_local(&st.http, i18n::lang()).await { push(&app, &st, |_| {}); }
     if auth::load().is_some() { let _ = share_call(&app, &st, "status").await; load_profile(&app, &st).await; }
     let mut prev = riot::Phase::Closed;
     let mut first = true;
@@ -351,13 +410,12 @@ async fn monitor(app: AppHandle, st: St) {
             push(&app, &st, |s| {
                 s.riot = name;
                 if !in_match { s.match_info = None; }
-                else if p.phase == riot::Phase::Ingame { if let Some(m) = s.match_info.as_mut() { m["endsAt"] = 0.into(); } }
+                else if p.phase == riot::Phase::Ingame && let Some(m) = s.match_info.as_mut() { m["endsAt"] = 0.into(); }
             });
             // 待機開始の通知(既定はオフ。app_data_dir に queue_notify というファイルがあるときだけ送る。VALORANT への追加の問い合わせはしない)
             if p.phase == riot::Phase::Queue && prev == riot::Phase::Menus && !first && msg.is_none()
                 && app.path().app_data_dir().map(|d| d.join("queue_notify").exists()).unwrap_or(false) {
-                let mut q = View::default();
-                q.mode = pregame::mode_name(&p.mode);
+                let q = View { mode: pregame::mode_name(&p.mode), ..Default::default() };
                 let mut b = q.body("queue", &shown);
                 b["party"] = serde_json::Value::Array(party_now.clone());
                 let _ = notify(&app, &st, b).await;
@@ -374,8 +432,8 @@ async fn monitor(app: AppHandle, st: St) {
         } else if in_match { away = 0; }
 
         // エージェント選択中は、選択の変化を取り込む
-        if msg.is_some() && want == "pregame" && p.phase == riot::Phase::Pregame {
-            if let Some(info) = pregame::fetch(&st.riot_http, &st.remote_http, &names).await {
+        if msg.is_some() && want == "pregame" && p.phase == riot::Phase::Pregame
+            && let Some(info) = pregame::fetch(&st.riot_http, &st.remote_http, &names).await {
                 if !info.map.is_empty() { v.map = info.map.clone(); v.map_img = info.map_img.clone(); }
                 let m = pregame::mode_name(&info.queue);
                 if !m.is_empty() { v.mode = m; }
@@ -385,7 +443,6 @@ async fn monitor(app: AppHandle, st: St) {
                 shown = info.players;
                 push(&app, &st, |s| s.match_info = Some(serde_json::json!({"mode": v.mode, "map": v.map, "endsAt": v.ends_at, "mapImg": v.map_img, "players": shown})));
             }
-        }
 
         // 終了したら、スコアボード(とコンペなら RR)が揃うまで送るのを待つ。Riot への問い合わせは控えめにする:
         //  - まずサーバーのキャッシュを見る(同じ試合を誰かが保存していれば Riot へ行かない)
@@ -394,9 +451,8 @@ async fn monitor(app: AppHandle, st: St) {
             if v.board.is_none() {
                 board_tries += 1; next_board = auth::now() + 4;
                 let url = format!("{}/{}?puuid={}", config::MATCH_URL, v.match_id, v.puuid);
-                if let Ok(c) = get_json(&st, &url).await {
-                    if c["board"].is_object() { v.board = Some(c["board"].clone()); log(&app, "scoreboard from cache"); }
-                }
+                if let Ok(c) = get_json(&st, &url).await
+                    && c["board"].is_object() { v.board = Some(c["board"].clone()); log(&app, "scoreboard from cache"); }
                 if v.board.is_none() {
                     match pregame::result(&st.riot_http, &st.remote_http, &names, &v.match_id).await {
                         pregame::Res::Ok(b) => { v.board = Some(b); log(&app, "scoreboard fetched"); }
@@ -510,7 +566,7 @@ pub fn run() {
         .plugin(tauri_plugin_opener::init())
         .plugin(tauri_plugin_autostart::init(tauri_plugin_autostart::MacosLauncher::LaunchAgent, Some(vec!["--hidden"])))
         .manage(st.clone())
-        .invoke_handler(tauri::generate_handler![get_state, get_autostart, set_autostart, get_boot_show, set_boot_show, get_queue_notify, set_queue_notify, login, cancel_login, refresh_profile, logout, send_test, update_now, check_update, share_op])
+        .invoke_handler(tauri::generate_handler![get_state, get_autostart, set_autostart, get_boot_show, set_boot_show, get_queue_notify, set_queue_notify, login, cancel_login, refresh_profile, logout, send_test, update_now, check_update, share_op, get_lang, set_lang])
         .on_window_event(|w, e| {
             // ×ボタンはトレイへ隠すだけにする
             if let tauri::WindowEvent::CloseRequested { api, .. } = e {
@@ -519,10 +575,12 @@ pub fn run() {
             }
         })
         .setup(move |app| {
+            if let Some(l) = lang_file(app.handle()).and_then(|f| std::fs::read_to_string(f).ok()) { i18n::set(l.trim()); }
             { let done = setup_path(app.handle()).map(|p| p.exists()).unwrap_or(false); let st3 = app.state::<St>(); if done || st3.snap.lock().unwrap().logged_in { push(app.handle(), &st3, |s| s.setup_done = true); } }
-            let open = MenuItem::with_id(app, "open", "開く", true, None::<&str>)?;
-            let quit = MenuItem::with_id(app, "quit", "終了", true, None::<&str>)?;
-            let upd = MenuItem::with_id(app, "update", "アップデートを確認", true, None::<&str>)?;
+            let open = MenuItem::with_id(app, "open", i18n::t("tray.open"), true, None::<&str>)?;
+            let quit = MenuItem::with_id(app, "quit", i18n::t("tray.quit"), true, None::<&str>)?;
+            let upd = MenuItem::with_id(app, "update", i18n::t("tray.update"), true, None::<&str>)?;
+            app.manage(TrayItems(vec![(open.clone(), "tray.open"), (upd.clone(), "tray.update"), (quit.clone(), "tray.quit")]));
             let menu = Menu::with_items(app, &[&open, &upd, &quit])?;
             TrayIconBuilder::new()
                 .icon(app.default_window_icon().unwrap().clone())

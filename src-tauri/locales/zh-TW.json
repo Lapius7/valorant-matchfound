@@ -1,0 +1,56 @@
+{
+  "tray": {
+    "open": "開啟",
+    "update": "檢查更新",
+    "quit": "結束"
+  },
+  "auth": {
+    "denied": "登入遭拒",
+    "expired": "代碼已過期",
+    "used": "此代碼已使用過",
+    "noToken": "無法取得權杖",
+    "unexpected": "非預期的狀態",
+    "notLoggedIn": "尚未登入",
+    "sessionExpired": "登入已過期，請重新登入"
+  },
+  "update": {
+    "noServer": "無法連線到更新伺服器",
+    "checkFailed": "檢查更新失敗",
+    "badInfo": "無法讀取更新資訊",
+    "noInstaller": "找不到安裝程式",
+    "noHash": "缺少雜湊值，無法更新",
+    "badSource": "下載來源與預期不符",
+    "downloadFailed": "下載失敗",
+    "mismatch": "下載的檔案不一致，已中止更新",
+    "latest": "已是最新版本",
+    "found": "有新版本"
+  },
+  "notify": {
+    "skipped": "剛剛已傳送，本次已略過",
+    "sent": "已透過 Discord 傳送私訊",
+    "noConnection": "無法連線",
+    "noServer": "無法連線到伺服器",
+    "invalidLogin": "登入無效，請重新登入",
+    "noDiscord": "Lapount 尚未連結 Discord",
+    "dmClosed": "目前設定無法接收私訊。請將 Lapbot 加入帳號並允許私訊",
+    "failed": "傳送失敗",
+    "invalidAction": "無效的操作"
+  },
+  "mode": {
+    "unrated": "一般模式",
+    "competitive": "競技模式",
+    "swiftplay": "超速模式",
+    "spikerush": "輻能搶攻戰",
+    "deathmatch": "死鬥",
+    "ggteam": "節節高升",
+    "onefa": "複製模式",
+    "hurm": "團隊死鬥",
+    "premier": "頂尖對決",
+    "snowball": "雪球大戰",
+    "custom": "自訂",
+    "test": "測試",
+    "testSend": "測試傳送",
+    "unknown": "未知"
+  },
+  "player": "玩家{n}"
+}

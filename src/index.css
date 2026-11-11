@@ -169,3 +169,10 @@ p { text-wrap: pretty; }
 }
 
 @media (prefers-reduced-motion: reduce) { .breathe { animation: none !important; } }
+/* 韓国語・中国語は Noto Sans JP の字形にならないよう、Windows の各言語のフォントを使う */
+html:lang(ko) { font-family: 'Geist Variable', 'Malgun Gothic', system-ui, sans-serif; }
+html:lang(ko) .font-mono { font-family: 'Geist Mono Variable', 'Malgun Gothic', ui-monospace, monospace; }
+html:lang(zh-CN) { font-family: 'Geist Variable', 'Microsoft YaHei UI', 'Microsoft YaHei', system-ui, sans-serif; }
+html:lang(zh-CN) .font-mono { font-family: 'Geist Mono Variable', 'Microsoft YaHei UI', 'Microsoft YaHei', ui-monospace, monospace; }
+html:lang(zh-TW) { font-family: 'Geist Variable', 'Microsoft JhengHei UI', 'Microsoft JhengHei', system-ui, sans-serif; }
+html:lang(zh-TW) .font-mono { font-family: 'Geist Mono Variable', 'Microsoft JhengHei UI', 'Microsoft JhengHei', ui-monospace, monospace; }

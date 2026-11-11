@@ -1,0 +1,56 @@
+{
+  "tray": {
+    "open": "開く",
+    "update": "アップデートを確認",
+    "quit": "終了"
+  },
+  "auth": {
+    "denied": "ログインが拒否されました",
+    "expired": "コードの有効期限が切れました",
+    "used": "このコードは使用済みです",
+    "noToken": "トークンを受け取れませんでした",
+    "unexpected": "予期しない状態です",
+    "notLoggedIn": "ログインしていません",
+    "sessionExpired": "ログインの有効期限が切れました。もう一度ログインしてください"
+  },
+  "update": {
+    "noServer": "更新サーバーに接続できません",
+    "checkFailed": "更新の確認に失敗しました",
+    "badInfo": "更新情報を読めませんでした",
+    "noInstaller": "インストーラーが見つかりません",
+    "noHash": "ハッシュ値がないため更新できません",
+    "badSource": "配布元が想定と違います",
+    "downloadFailed": "ダウンロードに失敗しました",
+    "mismatch": "ダウンロードしたファイルが一致しません。更新を中止しました",
+    "latest": "最新版です",
+    "found": "新しい版があります"
+  },
+  "notify": {
+    "skipped": "直前に送信済みのため、今回はスキップしました",
+    "sent": "Discord に DM を送りました",
+    "noConnection": "接続できません",
+    "noServer": "サーバーに接続できません",
+    "invalidLogin": "ログインが無効です。もう一度ログインしてください",
+    "noDiscord": "Lapount に Discord が連携されていません",
+    "dmClosed": "DM を受け取れない設定です。Lapbot をアカウントに追加し、DM を許可してください",
+    "failed": "送信に失敗しました",
+    "invalidAction": "不正な操作です"
+  },
+  "mode": {
+    "unrated": "アンレート",
+    "competitive": "コンペティティブ",
+    "swiftplay": "スウィフトプレイ",
+    "spikerush": "スパイクラッシュ",
+    "deathmatch": "デスマッチ",
+    "ggteam": "エスカレーション",
+    "onefa": "レプリケーション",
+    "hurm": "チームデスマッチ",
+    "premier": "プレミア",
+    "snowball": "スノーボールファイト",
+    "custom": "カスタム",
+    "test": "テスト",
+    "testSend": "テスト送信",
+    "unknown": "不明"
+  },
+  "player": "プレイヤー{n}"
+}

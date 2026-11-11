@@ -1,0 +1,142 @@
+{
+  "app": {
+    "title": "VALORANT Matchfound",
+    "setupProgress": "Configuration {num} / {total}"
+  },
+  "phase": {
+    "closed": {
+      "label": "VALORANT n’est pas lancé",
+      "hint": "La surveillance démarre automatiquement au lancement"
+    },
+    "starting": {
+      "label": "Connexion",
+      "hint": "Patientez jusqu’à la fin du lancement de VALORANT"
+    },
+    "menus": {
+      "label": "En attente",
+      "hint": "Lancez la recherche : vous recevrez un MP dès qu’une partie est trouvée"
+    },
+    "queue": {
+      "label": "Recherche",
+      "hint": "Vous pouvez attendre ici jusqu’à ce qu’une partie soit trouvée"
+    },
+    "pregame": {
+      "label": "Partie trouvée",
+      "hint": "Passez à la sélection de l’agent"
+    },
+    "ingame": {
+      "label": "En jeu",
+      "hint": "Vous pouvez la laisser tourner jusqu'à la fin de la partie"
+    }
+  },
+  "bot": {
+    "dmFailed": "Impossible d’envoyer le MP. Avez-vous installé Lapbot sur votre compte (installation utilisateur) ? Sinon, ajoutez-le avec le bouton ci-dessous.",
+    "addLapbot": "Ajouter Lapbot",
+    "seeSteps": "Voir les étapes"
+  },
+  "login": {
+    "title": "Se connecter avec Lapount",
+    "approveInBrowser": "Validez dans votre navigateur",
+    "redo": "Recommencer",
+    "cancel": "Annuler",
+    "desc": "Une fois connecté, les MP arrivent sur votre Discord associé.",
+    "button": "Se connecter avec Lapount",
+    "requireDm": "Connectez-vous avec Lapount pour recevoir des MP",
+    "goAccount": "Vers le compte"
+  },
+  "setup": {
+    "title": "Se connecter avec Lapount",
+    "desc": "Connectez-vous avec votre compte Lapount pour définir où envoyer les MP.",
+    "loginButton": "Se connecter avec Lapount",
+    "discordTitle": "Associer Discord",
+    "discordDesc": "Aucun compte Discord n’est associé à Lapount. Associez-le, puis appuyez sur « Vérifier ».",
+    "linkDiscord": "Associer via Lapount",
+    "confirm": "Vérifier",
+    "testTitle": "MP de test",
+    "testDesc": "Après avoir ajouté Lapbot à votre compte, envoyez un MP de test pour vérifier qu’il arrive. Dès qu’il arrive, la configuration est terminée.",
+    "testMethod": "Comment ajouter Lapbot",
+    "testButton": "Envoyer un MP de test"
+  },
+  "update": {
+    "checking": "Vérification",
+    "downloading": "Téléchargement de v{version}",
+    "available": "v{version} disponible",
+    "none": "À jour",
+    "error": "{message}",
+    "check": "Rechercher des mises à jour",
+    "dialogTitle": "Mettre à jour maintenant ?",
+    "dialogDesc": "Mise à jour vers v{version} puis redémarrage de l’application.",
+    "cancel": "Annuler",
+    "update": "Mettre à jour et redémarrer"
+  },
+  "share": {
+    "title": "Lien spectateur",
+    "public": "Public",
+    "copied": "Copié",
+    "copy": "Copier",
+    "reissue": "Régénérer",
+    "issue": "Créer le lien",
+    "warning": "Toute personne ayant le lien peut voir les noms des joueurs de la partie en cours. Il n’apparaît pas dans les recherches.",
+    "delete": "Supprimer"
+  },
+  "tabs": {
+    "home": "Accueil",
+    "account": "Compte",
+    "settings": "Réglages"
+  },
+  "account": {
+    "loginLabel": "Connecté à Lapount",
+    "row": {
+      "discordName": "Nom Discord",
+      "discordUser": "Nom d’utilisateur Discord",
+      "discordId": "ID Discord",
+      "discordEmail": "E-mail Discord",
+      "lapountEmail": "E-mail Lapount",
+      "lapountId": "ID Lapount",
+      "registered": "Inscription",
+      "lastSignIn": "Dernière connexion"
+    },
+    "noDiscord": {
+      "title": "Aucun Discord n’est associé à Lapount. Une fois associé, vous recevrez un MP quand une partie est trouvée.",
+      "button": "Associer Discord via Lapount",
+      "note": "La modification s’applique après réouverture de l’application."
+    },
+    "botMissing": "Lapbot n’a pas été ajouté à votre compte, les MP n’arrivent donc pas.",
+    "botAdd": "Pour recevoir des MP, ajoutez Lapbot à votre compte.",
+    "howToAdd": "Voir comment l’ajouter",
+    "logout": "Se déconnecter"
+  },
+  "settings": {
+    "notificationsTitle": "Notifications Discord",
+    "notificationsDesc": "Vérifiez que les MP de partie trouvée arrivent.",
+    "testButton": "Envoyer un MP de test",
+    "addLapbot": "Ajouter Lapbot",
+    "addMethod": "Comment l’ajouter",
+    "autostart": "Lancer au démarrage de Windows",
+    "bootShow": "Afficher la fenêtre au démarrage",
+    "queueNotify": "Prévenir aussi par MP au début de la recherche",
+    "lang": "Langue",
+    "matchHistory": "Historique des parties",
+    "contact": "Contact",
+    "contactDiscordLabel": "Discord: ",
+    "contactDiscordSuffix": " (MP)",
+    "contactXSuffix": " (MP)",
+    "officialPage": "Page officielle",
+    "docs": "Documentation",
+    "github": "GitHub",
+    "version": "v{version}"
+  },
+  "party": {
+    "party": "Groupe ({count}/5)",
+    "you": "Vous"
+  },
+  "match": {
+    "map": "Carte",
+    "agentWaiting": "Choix en attente",
+    "locked": "Verrouillé",
+    "selecting": "Choisit",
+    "waiting": "En attente",
+    "seconds": "s",
+    "ariaLeft": "{left} s restantes"
+  }
+}

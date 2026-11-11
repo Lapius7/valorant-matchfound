@@ -1,0 +1,142 @@
+{
+  "app": {
+    "title": "VALORANT Matchfound",
+    "setupProgress": "Configuración {num} / {total}"
+  },
+  "phase": {
+    "closed": {
+      "label": "VALORANT no se está ejecutando",
+      "hint": "La vigilancia empieza sola al abrirlo"
+    },
+    "starting": {
+      "label": "Conectando",
+      "hint": "Espera a que VALORANT termine de abrirse"
+    },
+    "menus": {
+      "label": "En espera",
+      "hint": "Inicia la búsqueda y te enviaremos un MD cuando se encuentre la partida"
+    },
+    "queue": {
+      "label": "Buscando partida",
+      "hint": "Puedes esperar aquí hasta que se encuentre"
+    },
+    "pregame": {
+      "label": "Partida encontrada",
+      "hint": "Pasa a la selección de agente"
+    },
+    "ingame": {
+      "label": "En partida",
+      "hint": "Puedes dejarla abierta hasta que termine la partida"
+    }
+  },
+  "bot": {
+    "dmFailed": "No se pudo enviar el MD. ¿Has instalado Lapbot en tu cuenta (instalación de usuario)? Si no, añádelo con el botón de abajo.",
+    "addLapbot": "Añadir Lapbot",
+    "seeSteps": "Ver pasos"
+  },
+  "login": {
+    "title": "Iniciar sesión con Lapount",
+    "approveInBrowser": "Aprueba en el navegador",
+    "redo": "Reintentar",
+    "cancel": "Cancelar",
+    "desc": "Al iniciar sesión, los MD llegan a tu Discord vinculado.",
+    "button": "Iniciar sesión con Lapount",
+    "requireDm": "Inicia sesión con Lapount para recibir MD",
+    "goAccount": "Ir a la cuenta"
+  },
+  "setup": {
+    "title": "Iniciar sesión con Lapount",
+    "desc": "Inicia sesión con tu cuenta de Lapount para saber adónde enviar los MD.",
+    "loginButton": "Iniciar sesión con Lapount",
+    "discordTitle": "Vincular Discord",
+    "discordDesc": "No hay ninguna cuenta de Discord vinculada a Lapount. Vincúlala y pulsa «Comprobar».",
+    "linkDiscord": "Vincular en Lapount",
+    "confirm": "Comprobar",
+    "testTitle": "MD de prueba",
+    "testDesc": "Después de añadir Lapbot a tu cuenta, envía un MD de prueba para comprobar que llega. Cuando llegue, la configuración habrá terminado.",
+    "testMethod": "Cómo añadir Lapbot",
+    "testButton": "Enviar MD de prueba"
+  },
+  "update": {
+    "checking": "Comprobando",
+    "downloading": "Descargando v{version}",
+    "available": "v{version} disponible",
+    "none": "Actualizado",
+    "error": "{message}",
+    "check": "Buscar actualizaciones",
+    "dialogTitle": "¿Actualizar ahora?",
+    "dialogDesc": "Se actualizará a v{version} y se reiniciará la app.",
+    "cancel": "Cancelar",
+    "update": "Actualizar y reiniciar"
+  },
+  "share": {
+    "title": "URL de espectador",
+    "public": "Pública",
+    "copied": "Copiado",
+    "copy": "Copiar",
+    "reissue": "Regenerar",
+    "issue": "Crear URL",
+    "warning": "Cualquiera con la URL puede ver los nombres de los jugadores de la partida actual. No aparece en búsquedas.",
+    "delete": "Eliminar"
+  },
+  "tabs": {
+    "home": "Inicio",
+    "account": "Cuenta",
+    "settings": "Ajustes"
+  },
+  "account": {
+    "loginLabel": "Sesión iniciada en Lapount",
+    "row": {
+      "discordName": "Nombre de Discord",
+      "discordUser": "Usuario de Discord",
+      "discordId": "ID de Discord",
+      "discordEmail": "Correo de Discord",
+      "lapountEmail": "Correo de Lapount",
+      "lapountId": "ID de Lapount",
+      "registered": "Registro",
+      "lastSignIn": "Último inicio de sesión"
+    },
+    "noDiscord": {
+      "title": "No hay ningún Discord vinculado a Lapount. Al vincularlo, recibirás un MD cuando se encuentre una partida.",
+      "button": "Vincular Discord en Lapount",
+      "note": "El cambio se aplica al volver a abrir la app."
+    },
+    "botMissing": "Lapbot no se ha añadido a tu cuenta, por eso no llegan los MD.",
+    "botAdd": "Para recibir MD, añade Lapbot a tu cuenta.",
+    "howToAdd": "Ver cómo añadirlo",
+    "logout": "Cerrar sesión"
+  },
+  "settings": {
+    "notificationsTitle": "Notificaciones de Discord",
+    "notificationsDesc": "Comprueba que llegan los MD de partida encontrada.",
+    "testButton": "Enviar MD de prueba",
+    "addLapbot": "Añadir Lapbot",
+    "addMethod": "Cómo añadirlo",
+    "autostart": "Iniciar con Windows",
+    "bootShow": "Mostrar ventana al iniciar",
+    "queueNotify": "Avisar también por MD al empezar a buscar",
+    "lang": "Idioma",
+    "matchHistory": "Historial de partidas",
+    "contact": "Contacto",
+    "contactDiscordLabel": "Discord: ",
+    "contactDiscordSuffix": " (MD)",
+    "contactXSuffix": " (MD)",
+    "officialPage": "Página oficial",
+    "docs": "Documentación",
+    "github": "GitHub",
+    "version": "v{version}"
+  },
+  "party": {
+    "party": "Grupo ({count}/5)",
+    "you": "Tú"
+  },
+  "match": {
+    "map": "Mapa",
+    "agentWaiting": "Esperando elección",
+    "locked": "Fijado",
+    "selecting": "Eligiendo",
+    "waiting": "Esperando",
+    "seconds": "s",
+    "ariaLeft": "Quedan {left} s"
+  }
+}

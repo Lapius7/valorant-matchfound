@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Check } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { t } from "@/i18n/index";
 
 export type MatchPlayer = { icon: string; name: string; agent: string; locked: boolean };
 export type MatchInfo = { mode: string; map: string; mapImg: string; endsAt: number; players: MatchPlayer[] };
@@ -19,7 +20,7 @@ function Countdown({ endsAt }: { endsAt: number }) {
   const ratio = Math.min(1, left / total.current);
   const urgent = left <= 10;
   return (
-    <div className={cn("relative grid size-14 flex-none place-items-center", urgent && "urgent")} aria-label={`残り ${Math.ceil(left)} 秒`}>
+    <div className={cn("relative grid size-14 flex-none place-items-center", urgent && "urgent")} aria-label={t("match.ariaLeft", { left: Math.ceil(left) })}>
       <svg viewBox="0 0 52 52" className="absolute inset-0 -rotate-90">
         <circle cx="26" cy="26" r={R} fill="none" stroke="var(--border)" strokeWidth="3" />
         <circle cx="26" cy="26" r={R} fill="none" stroke={urgent ? "var(--signal)" : "var(--foreground)"} strokeWidth="6" opacity=".12" strokeDasharray={C} strokeDashoffset={C * (1 - ratio)} style={{ filter: "blur(4px)", transition: "stroke-dashoffset 220ms linear" }} />
@@ -32,7 +33,7 @@ function Countdown({ endsAt }: { endsAt: number }) {
       </svg>
       <span className="flex flex-col items-center">
         <span className="font-mono text-lg leading-5 font-medium tabular-nums">{Math.ceil(left)}</span>
-        <span className="text-[10px] leading-3 text-muted-foreground">秒</span>
+        <span className="text-[10px] leading-3 text-muted-foreground">{t("match.seconds")}</span>
       </span>
     </div>
   );
@@ -61,7 +62,7 @@ export function MatchPanel({ m, ingame }: { m: MatchInfo; ingame: boolean }) {
     <div className="match-in mt-1 flex flex-col gap-3">
       <div className="flex items-center justify-between gap-3">
         <div className="flex min-w-0 flex-col gap-1">
-          <span className="truncate text-lg leading-6 font-medium tracking-[-0.01em]">{m.map || "マップ"}</span>
+          <span className="truncate text-lg leading-6 font-medium tracking-[-0.01em]">{m.map || t("match.map")}</span>
           {m.mode && (
             <span className="flex h-6 w-fit items-center rounded-full bg-background/60 px-2.5 text-xs leading-4 text-muted-foreground shadow-[0_0_0_1px_var(--border)]">
               {m.mode}
@@ -85,7 +86,7 @@ export function MatchPanel({ m, ingame }: { m: MatchInfo; ingame: boolean }) {
             <span className="flex min-w-0 flex-1 flex-col">
               <span className="truncate text-sm leading-5">{p.name}</span>
               <span key={p.agent} className={cn("text-label truncate text-xs leading-4", p.agent ? "text-muted-foreground" : "text-muted-foreground/60")}>
-                {p.agent || "選択待ち"}
+                {p.agent || t("match.agentWaiting")}
               </span>
             </span>
             <span
@@ -94,7 +95,7 @@ export function MatchPanel({ m, ingame }: { m: MatchInfo; ingame: boolean }) {
                 p.locked ? "bg-signal text-white" : p.agent ? "bg-foreground/10 text-foreground" : "text-muted-foreground/60",
               )}
             >
-              {p.locked ? <><Check key="c" className="pop size-3.5 flex-none" />ロック</> : p.agent ? "選択中" : "待機"}
+              {p.locked ? <><Check key="c" className="pop size-3.5 flex-none" />{t("match.locked")}</> : p.agent ? t("match.selecting") : t("match.waiting")}
             </span>
           </li>
         ))}

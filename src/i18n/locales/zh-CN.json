@@ -1,0 +1,142 @@
+{
+  "app": {
+    "title": "VALORANT Matchfound",
+    "setupProgress": "设置 {num} / {total}"
+  },
+  "phase": {
+    "closed": {
+      "label": "VALORANT 未运行",
+      "hint": "启动后会自动开始监视"
+    },
+    "starting": {
+      "label": "正在连接",
+      "hint": "请等待 VALORANT 启动完成"
+    },
+    "menus": {
+      "label": "等待中",
+      "hint": "开始匹配后，匹配成功时会通过私信通知你"
+    },
+    "queue": {
+      "label": "匹配中",
+      "hint": "在此等待匹配成功即可"
+    },
+    "pregame": {
+      "label": "匹配成功",
+      "hint": "请进入特工选择"
+    },
+    "ingame": {
+      "label": "对局中",
+      "hint": "对局结束前保持运行即可"
+    }
+  },
+  "bot": {
+    "dmFailed": "私信发送失败。你是否已将 Lapbot 以用户安装的方式添加到账号？如果还没有，请点击下方按钮添加。",
+    "addLapbot": "添加 Lapbot",
+    "seeSteps": "查看步骤"
+  },
+  "login": {
+    "title": "使用 Lapount 登录",
+    "approveInBrowser": "请在浏览器中批准",
+    "redo": "重试",
+    "cancel": "取消",
+    "desc": "登录后，私信会发送到已关联的 Discord。",
+    "button": "使用 Lapount 登录",
+    "requireDm": "登录 Lapount 以接收私信",
+    "goAccount": "前往账号"
+  },
+  "setup": {
+    "title": "使用 Lapount 登录",
+    "desc": "为确认私信的接收方，请使用 Lapount 账号登录。",
+    "loginButton": "使用 Lapount 登录",
+    "discordTitle": "关联 Discord",
+    "discordDesc": "Lapount 未关联 Discord 账号。关联后请点击“确认”。",
+    "linkDiscord": "在 Lapount 中关联",
+    "confirm": "确认",
+    "testTitle": "测试发送",
+    "testDesc": "将 Lapbot 添加到账号后，用测试发送确认能否收到私信。收到后即完成设置。",
+    "testMethod": "如何添加 Lapbot",
+    "testButton": "测试发送"
+  },
+  "update": {
+    "checking": "检查中",
+    "downloading": "正在下载 v{version}",
+    "available": "有新版本 v{version}",
+    "none": "已是最新版本",
+    "error": "{message}",
+    "check": "检查更新",
+    "dialogTitle": "现在更新吗？",
+    "dialogDesc": "将更新到 v{version} 并重启应用。",
+    "cancel": "取消",
+    "update": "更新并重启"
+  },
+  "share": {
+    "title": "观战链接",
+    "public": "公开中",
+    "copied": "已复制",
+    "copy": "复制",
+    "reissue": "重新生成",
+    "issue": "生成链接",
+    "warning": "知道链接的任何人都能看到当前对局中的玩家名称。不会出现在搜索结果中。",
+    "delete": "删除"
+  },
+  "tabs": {
+    "home": "主页",
+    "account": "账号",
+    "settings": "设置"
+  },
+  "account": {
+    "loginLabel": "已登录 Lapount",
+    "row": {
+      "discordName": "Discord 名称",
+      "discordUser": "Discord 用户名",
+      "discordId": "Discord ID",
+      "discordEmail": "Discord 邮箱",
+      "lapountEmail": "Lapount 邮箱",
+      "lapountId": "Lapount ID",
+      "registered": "注册时间",
+      "lastSignIn": "上次登录"
+    },
+    "noDiscord": {
+      "title": "Lapount 未关联 Discord。关联后，匹配成功时会收到私信。",
+      "button": "在 Lapount 中关联 Discord",
+      "note": "关联后重新打开应用即可生效。"
+    },
+    "botMissing": "Lapbot 未添加到账号，因此收不到私信。",
+    "botAdd": "要接收私信，请将 Lapbot 添加到账号。",
+    "howToAdd": "查看添加方法",
+    "logout": "退出登录"
+  },
+  "settings": {
+    "notificationsTitle": "Discord 通知",
+    "notificationsDesc": "确认能否收到匹配成功的私信。",
+    "testButton": "测试发送",
+    "addLapbot": "添加 Lapbot",
+    "addMethod": "添加方法",
+    "autostart": "Windows 启动时运行",
+    "bootShow": "启动时显示窗口",
+    "queueNotify": "开始排队时也发私信通知",
+    "lang": "语言",
+    "matchHistory": "查看战绩",
+    "contact": "联系我们",
+    "contactDiscordLabel": "Discord: ",
+    "contactDiscordSuffix": " 私信",
+    "contactXSuffix": " 私信",
+    "officialPage": "官方页面",
+    "docs": "文档",
+    "github": "GitHub",
+    "version": "v{version}"
+  },
+  "party": {
+    "party": "队伍（{count}/5）",
+    "you": "你"
+  },
+  "match": {
+    "map": "地图",
+    "agentWaiting": "等待选择",
+    "locked": "已锁定",
+    "selecting": "选择中",
+    "waiting": "等待",
+    "seconds": "秒",
+    "ariaLeft": "剩余 {left} 秒"
+  }
+}
